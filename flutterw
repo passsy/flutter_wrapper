@@ -4,11 +4,17 @@
 ##
 ##  Flutter start up script for UN*X
 ##
+##  Source: https://github.com/passsy/flutter_wrapper
+##
+##  Use this flutter wrapper to bundle flutter within your project to make
+##  sure everybody builds with the same version. Put `flutterw` into the root 
+##  of your flutter project and execute it. It will download all dependencies
+##  automatically when calling it.
+##
+##  Inspired by gradle-wrapper.
+##
 ##############################################################################
 
-# Use this flutter wrapper to bundle flutter within your project to make sure everybody builds with the same version
-# put `flutterw` into the root of your flutter project and execute it. It will download all dependencies automatically when calling it.
-# Inspired by gradle-wrapper
 
 # Attempt to set APP_HOME
 # Resolve links: $0 may be a link
