@@ -7,7 +7,7 @@
 ##  Source: https://github.com/passsy/flutter_wrapper
 ##
 ##  Use this flutter wrapper to bundle flutter within your project to make
-##  sure everybody builds with the same version. Put `flutterw` into the root 
+##  sure everybody builds with the same version. Put `flutterw` into the root
 ##  of your flutter project and execute it. It will download all dependencies
 ##  automatically when calling it.
 ##
@@ -34,7 +34,8 @@ cd "`dirname \"$PRG\"`/" >/dev/null
 APP_HOME="`pwd -P`"
 cd "$SAVED" >/dev/null
 
-FLUTTER_DIR="$APP_HOME/.flutter"
+FLUTTER_DIR_NAME='.flutter'
+FLUTTER_DIR="$APP_HOME/$FLUTTER_DIR_NAME"
 
 # by default we should be in the correct project dir, but when run from Finder on Mac, the cwd is wrong
 if [ "$(uname)" = "Darwin" ] && [ "$HOME" = "$PWD" ]; then
@@ -43,7 +44,7 @@ fi
 
 # Check if submodule is initialized, if not add as submodule
 if [ ! -f "$FLUTTER_DIR/.git" ]; then
-    git submodule add -b master git@github.com:flutter/flutter.git $FLUTTER_DIR
+    git submodule add -b master git@github.com:flutter/flutter.git $FLUTTER_DIR_NAME
 fi
 
 # Wrapper tasks done, call flutter binay with all args
