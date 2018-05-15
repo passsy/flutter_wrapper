@@ -44,12 +44,6 @@ fi
 
 # Check if submodule is initialized, if not add as submodule
 if [ ! -f "$FLUTTER_DIR/.git" ]; then
-  # This branch runs at first setup or after cloning the project again
-
-  # This is a good place to automatically add the flutterw executable, it will
-  # not be called every time
-  git add flutterw
-
   # Add flutter as submodule and pin that specific version
   git submodule add -b master git@github.com:flutter/flutter.git $FLUTTER_DIR_NAME
 fi
