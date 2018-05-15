@@ -13,3 +13,6 @@ git rm -f $FLUTTER_DIR_NAME
 
 # remove submodule history
 rm -rf .git/modules/$FLUTTER_DIR_NAME
+
+# remove empty .gitmodules file
+[ -s .gitmodules ] || rm .gitmodules
