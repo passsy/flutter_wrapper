@@ -16,5 +16,6 @@ FLUTTER_DIR_NAME='.flutter'
 # add the flutter submodule
 git submodule add -b master git@github.com:flutter/flutter.git $FLUTTER_DIR_NAME
 
-
-echo -e "\nFlutter Wrapper installed, run your app with\n\n\t./flutterw run\n"
+echo -e "\nFlutter Wrapper installed, switched to channel master.\n"
+echo -e "Run your app with:\t./flutterw run"
+echo -e "Switch channel:\t\t./flutterw channel beta"
