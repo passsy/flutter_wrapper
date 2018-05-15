@@ -5,12 +5,12 @@
 ## Install
 
 ```bash
-curl -O "https://raw.githubusercontent.com/passsy/flutter_wrapper/master/flutterw" && chmod 755 flutterw && ./flutterw
+curl -sL https://raw.githubusercontent.com/passsy/flutter_wrapper/master/install.sh | bash -
 ```
 
 
 ## Uninstall
 
 ```bash
-curl -sL https://raw.githubusercontent.com/passsy/flutter_wrapper/master/uninstall_flutterw.sh | bash -
+curl -sL https://raw.githubusercontent.com/passsy/flutter_wrapper/master/uninstall.sh | bash -
 ```
