@@ -42,10 +42,10 @@ if [ "$(uname)" = "Darwin" ] && [ "$HOME" = "$PWD" ]; then
   cd "$(dirname "$0")"
 fi
 
-# Check if submodule is initialized, if not add as submodule
-if [ ! -f "$FLUTTER_DIR/.git" ]; then
+# Check if flutter executable exists, if not fetch submodule
+if [ ! -f "$FLUTTER_DIR/bin/flutter" ]; then
   # Add flutter as submodule and pin that specific version
-  git submodule add -b master git@github.com:flutter/flutter.git $FLUTTER_DIR_NAME
+  git submodule update --init .flutter
 fi
 
 # Wrapper tasks done, call flutter binay with all args

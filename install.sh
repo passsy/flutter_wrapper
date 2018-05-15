@@ -1,6 +1,6 @@
 #!/usr/bin/env sh
 
-echo "Installing Flutter Wrapper..."
+echo "\nInstalling Flutter Wrapper\n"
 
 # Download latest flutterw version
 curl -O "https://raw.githubusercontent.com/passsy/flutter_wrapper/master/flutterw"
@@ -11,7 +11,10 @@ chmod 755 flutterw
 # add it to git
 git add flutterw
 
-# initialize flutter for first run
-./flutterw
+FLUTTER_DIR_NAME='.flutter'
 
-echo "Flutter Wrapper installed, run your app with\n\t./flutterw run"
+# add the flutter submodule
+git submodule add -b master git@github.com:flutter/flutter.git $FLUTTER_DIR_NAME
+
+
+echo -e "\nFlutter Wrapper installed, run your app with\n\n\t./flutterw run\n"
