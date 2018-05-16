@@ -2,6 +2,13 @@
 
 echo "\nInstalling Flutter Wrapper\n"
 
+# Verify flutter project is a git repo
+inside_git_repo="$(git rev-parse --is-inside-work-tree 2>/dev/null)"
+if ! [ "$inside_git_repo" ]; then
+  printf "Error: Not a git repository, to fix this run: git init\n"
+  exit 1
+fi
+
 # Download latest flutterw version
 curl -O "https://raw.githubusercontent.com/passsy/flutter_wrapper/master/flutterw"
 
