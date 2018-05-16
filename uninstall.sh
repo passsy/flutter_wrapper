@@ -12,7 +12,7 @@ git rm -f flutterw >> /dev/null 2>&1 || rm flutterw
 git submodule deinit -f $FLUTTER_DIR_NAME
 
 # remove submodule directory
-git rm -f $FLUTTER_DIR_NAME
+git rm -rf $FLUTTER_DIR_NAME
 
 # remove submodule history
 rm -rf .git/modules/$FLUTTER_DIR_NAME
