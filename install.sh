@@ -1,6 +1,6 @@
 #!/usr/bin/env sh
 
-echo "\nInstalling Flutter Wrapper\n"
+printf "\nInstalling Flutter Wrapper\n\n"
 
 # Verify flutter project is a git repo
 inside_git_repo="$(git rev-parse --is-inside-work-tree 2>/dev/null)"
@@ -29,6 +29,7 @@ FLUTTER_DIR_NAME='.flutter'
 # add the flutter submodule
 git submodule add -b master git@github.com:flutter/flutter.git $FLUTTER_DIR_NAME
 
-echo -e "\nFlutter Wrapper installed, switched to channel master.\n"
-echo -e "Run your app with:\t./flutterw run"
-echo -e "Switch channel:\t\t./flutterw channel beta"
+
+printf "\nFlutter Wrapper installed, initialized with channel master.\n\n"
+printf "Run your app with:     ./flutterw run\n"
+printf "Switch channel:        ./flutterw channel beta\n"
