@@ -6,7 +6,7 @@ The flutter wrapper will add flutter as a submodule to your project which pins t
 
 ## Get started
 
-### Install wrapper
+#### Install wrapper
 
 Run this command from the root of your flutter project
 
@@ -16,7 +16,7 @@ curl -sL https://raw.githubusercontent.com/passsy/flutter_wrapper/master/install
 Don't forget to commit your changes afterwards.
 
 
-## Get started with Flutter without adding flutter to your PATH
+#### Get started with Flutter without adding flutter to your PATH
 
 The [Flutter install process](https://flutter.io/setup-macos/#get-sdk) is not perfectly automated. You have to manually download Flutter and add it to your path before you can use the awesome Flutter CLI to create a new project. With the flutter wrapper this becomes easier.
 
@@ -29,7 +29,7 @@ curl -sL https://raw.githubusercontent.com/passsy/flutter_wrapper/master/install
 
 ## Maintenance
 
-### Update flutter wrapper
+#### Update flutter wrapper
 
 Run the install command again.
 
@@ -37,7 +37,7 @@ Run the install command again.
 curl -sL https://raw.githubusercontent.com/passsy/flutter_wrapper/master/install.sh | bash -
 ```
 
-## Uninstall flutter wrapper
+#### Uninstall flutter wrapper
 
 Removing submodules is hard, that's why I did the hard work for you.
 Simply run this command from the root of your flutter project and the uninstall script will cleanup everything.
@@ -46,6 +46,6 @@ Simply run this command from the root of your flutter project and the uninstall 
 curl -sL https://raw.githubusercontent.com/passsy/flutter_wrapper/master/uninstall.sh | bash -
 ```
 
-## Update flutter version
+#### Update flutter version
 
 No special command required. Run `./flutterw channel <master|dev|beta>`, afterwards add and commit changed `.flutter` submodule reference.
