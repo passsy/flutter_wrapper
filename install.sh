@@ -9,6 +9,12 @@ if ! [ "$inside_git_repo" ]; then
   exit 1
 fi
 
+# Make sure this is the root of the flutter dir (search for pubspec.yaml)
+if ! [ -f pubspec.yaml ]; then
+  printf "Warning: Not executed in flutter root. Couldn't find pubspec.yaml.\n"
+  printf "Continuing in case this flutter wrapper is used to create a new project. If so continue with './flutterw create .'\n\n"
+fi
+
 # Download latest flutterw version
 curl -O "https://raw.githubusercontent.com/passsy/flutter_wrapper/master/flutterw"
 
