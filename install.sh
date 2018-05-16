@@ -29,6 +29,8 @@ FLUTTER_DIR_NAME='.flutter'
 # add the flutter submodule
 git submodule add -b master git@github.com:flutter/flutter.git $FLUTTER_DIR_NAME
 
+# bind this flutter instance to the project (update .packages file)
+./flutterw packages get
 
 printf "\nFlutter Wrapper installed, initialized with channel master.\n\n"
 printf "Run your app with:     ./flutterw run\n"
