@@ -15,7 +15,7 @@ Don't forget to commit your changes afterwards.
 
 ## Update wrapper
 
-Run the install script again.
+Run the install command again.
 
 ## Uninstall wrapper
 
