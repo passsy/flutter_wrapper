@@ -15,11 +15,18 @@ if ! [ -f pubspec.yaml ]; then
   printf "Continuing in case this flutter wrapper is used to create a new project. If so continue with './flutterw create .'\n\n"
 fi
 
+# Get latest version from master in git
+LATEST_VERSION=`curl "https://raw.githubusercontent.com/passsy/flutter_wrapper/master/version"`
+echo "Latest version is $LATEST_VERSION"
+
 # Download latest flutterw version
-curl -O "https://raw.githubusercontent.com/passsy/flutter_wrapper/master/flutterw"
+curl -O "https://raw.githubusercontent.com/passsy/flutter_wrapper/v$LATEST_VERSION/flutterw"
 
 # make it executable
 chmod 755 flutterw
+
+# Replace version string in wrapper
+sed -i "s/\$VERSION\$/$LATEST_VERSION/g" flutterw
 
 # add it to git
 git add flutterw
