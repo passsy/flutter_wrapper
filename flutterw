@@ -3,6 +3,7 @@
 ##############################################################################
 ##
 ##  Flutter start up script for UN*X
+##  Version 0.5.0
 ##
 ##  Use this flutter wrapper to bundle Flutter within your project to make
 ##  sure everybody builds with the same version.
