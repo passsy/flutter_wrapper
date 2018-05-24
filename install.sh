@@ -47,6 +47,10 @@ chmod 755 flutterw
 # Replace version string in wrapper
 sed -i '' "s/VERSION_PLACEHOLDER/$VERSION_TAG/g" flutterw
 
+# Replace date placeholder in wrapper
+DATE=`date '+%Y-%m-%d %H:%M:%S'`
+sed -i '' "s/DATE_PLACEHOLDER/$DATE/g" flutterw
+
 # add it to git
 git add flutterw
 
