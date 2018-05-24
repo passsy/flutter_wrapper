@@ -37,6 +37,12 @@ Run the install command again.
 curl -sL https://raw.githubusercontent.com/passsy/flutter_wrapper/master/install.sh | bash -
 ```
 
+If you want a specific version, use this for `v0.6.0`
+
+```bash
+curl -sL https://raw.githubusercontent.com/passsy/flutter_wrapper/master/install.sh | bash /dev/stdin -t v0.6.0
+```
+
 #### Uninstall flutter wrapper
 
 Removing submodules is hard, that's why I did the hard work for you.
