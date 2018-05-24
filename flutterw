@@ -3,7 +3,7 @@
 ##############################################################################
 ##
 ##  Flutter start up script for UN*X
-##  Version !VERSION!
+##  Version: VERSION_PLACEHOLDER
 ##
 ##  Use this flutter wrapper to bundle Flutter within your project to make
 ##  sure everybody builds with the same version.
