@@ -16,7 +16,7 @@ if ! [ -f pubspec.yaml ]; then
 fi
 
 # Get latest version from master in git
-LATEST_VERSION=`curl "https://raw.githubusercontent.com/passsy/flutter_wrapper/master/version"`
+LATEST_VERSION=`curl -s "https://raw.githubusercontent.com/passsy/flutter_wrapper/master/version"`
 echo "Latest version is $LATEST_VERSION"
 
 # Download latest flutterw version
