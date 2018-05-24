@@ -26,7 +26,7 @@ curl -O "https://raw.githubusercontent.com/passsy/flutter_wrapper/v$LATEST_VERSI
 chmod 755 flutterw
 
 # Replace version string in wrapper
-sed -i "s/\$VERSION\$/$LATEST_VERSION/g" flutterw
+sed -i "s/!VERSION!/$LATEST_VERSION/g" flutterw
 
 # add it to git
 git add flutterw
