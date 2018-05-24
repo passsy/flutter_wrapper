@@ -32,6 +32,11 @@ done
 if [ -z "$VERSION_TAG" ]; then
   # Get latest version from master in git
   VERSION_TAG=`curl -s "https://raw.githubusercontent.com/passsy/flutter_wrapper/master/version"`
+
+  if [[ ! $VERSION_TAG = "v"* ]]; then
+    # add v prefix for tag if not present
+    VERSION_TAG="v$VERSION_TAG"
+  fi
 fi
 
 
