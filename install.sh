@@ -65,6 +65,11 @@ printf "adding '.flutter' submodule\n"
 # add the flutter submodule
 git submodule add -b master git@github.com:flutter/flutter.git $FLUTTER_DIR_NAME
 
+if [ ! $? -eq 0 ]; then
+  echo "Abort installation of flutterw, couldn't clone flutter. Fix your ssh config" >&2
+  exit 1
+fi
+
 # bind this flutter instance to the project (update .packages file)
 ./flutterw packages get
 
