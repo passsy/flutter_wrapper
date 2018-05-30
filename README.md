@@ -22,6 +22,7 @@ The [Flutter install process](https://flutter.io/setup-macos/#get-sdk) is not pe
 
 ```bash
 mkdir flutter_wrapper_project && cd "$_"
+git init
 curl -sL https://raw.githubusercontent.com/passsy/flutter_wrapper/master/install.sh | bash -
 ./flutterw create .
 ./flutterw run
