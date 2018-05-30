@@ -61,18 +61,32 @@ git add flutterw
 
 FLUTTER_DIR_NAME='.flutter'
 
-printf "adding '.flutter' submodule\n"
-# add the flutter submodule
-git submodule add -b master git@github.com:flutter/flutter.git $FLUTTER_DIR_NAME
+# Check if submodule already exists (when updating flutter wrapper)
+HAS_SUBMODULE=`git submodule | grep .flutter`
 
-if [ ! $? -eq 0 ]; then
-  echo "Abort installation of flutterw, couldn't clone flutter. Fix your ssh config" >&2
-  exit 1
+if [ -z "$HAS_SUBMODULE" ]; then
+  printf "adding '.flutter' submodule\n"
+  UPDATED=false
+  # add the flutter submodule
+  git submodule add -b master git@github.com:flutter/flutter.git $FLUTTER_DIR_NAME
+
+  # When submodule failed, abort
+  if [ ! $? -eq 0 ]; then
+    echo "Abort installation of flutterw, couldn't clone flutter" >&2
+    exit 1
+  fi
+else
+  UPDATED=true
 fi
+
 
 # bind this flutter instance to the project (update .packages file)
 ./flutterw packages get
 
-printf "\nFlutter Wrapper installed, initialized with channel master.\n\n"
+if $UPDATED ; then
+  printf "\nFlutter Wrapper updated to version $VERSION_TAG\n\n"
+else
+  printf "\nFlutter Wrapper installed (version $VERSION_TAG), initialized with channel master.\n\n"
+fi
 printf "Run your app with:     ./flutterw run\n"
 printf "Switch channel:        ./flutterw channel beta\n"
