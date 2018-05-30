@@ -4,6 +4,8 @@ Similar to the gradle wrapper, an executable shell script in the root of you pro
 
 The flutter wrapper will add flutter as a submodule to your project which pins the version allowing you to upgrade flutter for all developers in you project at the same time.
 
+Read the story on [Medium](https://medium.com/grandcentrix/flutter-wrapper-bind-your-project-to-an-explicit-flutter-release-4062cfe6dcaf)
+
 ## Get started
 
 #### Install wrapper
