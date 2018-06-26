@@ -14,7 +14,7 @@ if ! [ -f pubspec.yaml ]; then
 fi
 
 # Parse arguments
-while [[ $# -gt 0 ]]; do case $1 in
+while [ "$1" != "" ]; do case $1 in
 
   # version tag which should be used for downloading
   -t|--tag)
