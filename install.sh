@@ -14,7 +14,7 @@ if ! [ -f pubspec.yaml ]; then
 fi
 
 # Parse arguments
-while [[ $# -gt 0 ]]; do case $1 in
+while [ "$1" != "" ]; do case $1 in
 
   # version tag which should be used for downloading
   -t|--tag)
@@ -32,8 +32,9 @@ done
 if [ -z "$VERSION_TAG" ]; then
   # Get latest version from master in git
   VERSION_TAG=`curl -s "https://raw.githubusercontent.com/passsy/flutter_wrapper/master/version"`
-
-  if [[ ! $VERSION_TAG = "v"* ]]; then
+  
+  starts_with_v=`echo "$VERSION_TAG" | cut -c 1`
+  if [ "$starts_with_v" = "v" ]; then
     # add v prefix for tag if not present
     VERSION_TAG="v$VERSION_TAG"
   fi
@@ -50,11 +51,11 @@ curl -sO "https://raw.githubusercontent.com/passsy/flutter_wrapper/$VERSION_TAG/
 chmod 755 flutterw
 
 # Replace version string in wrapper
-sed -i '' "s/VERSION_PLACEHOLDER/$VERSION_TAG/g" flutterw
+sed -i.bak "s/VERSION_PLACEHOLDER/$VERSION_TAG/g" flutterw && rm flutterw.bak
 
 # Replace date placeholder in wrapper
 DATE=`date '+%Y-%m-%d %H:%M:%S'`
-sed -i '' "s/DATE_PLACEHOLDER/$DATE/g" flutterw
+sed -i.bak "s/DATE_PLACEHOLDER/$DATE/g" flutterw && rm flutterw.bak
 
 # add it to git
 git add flutterw

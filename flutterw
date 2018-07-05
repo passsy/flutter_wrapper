@@ -43,10 +43,11 @@ if [ "$(uname)" = "Darwin" ] && [ "$HOME" = "$PWD" ]; then
   cd "$(dirname "$0")"
 fi
 
-status=`git submodule | grep .flutter`
+# submodule starting with "-" are not initialized
+init_status=`git submodule | grep .flutter | cut -c 1`
 
 # Fix not initialized flutter submodule
-if [[ $status = "-"* ]]; then
+if [ "$init_status" = "-" ]; then
   echo ".flutter submodule not initizlied. Initializing..."
   git submodule update --init .flutter
 fi
