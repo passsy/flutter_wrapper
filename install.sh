@@ -1,5 +1,9 @@
 #!/usr/bin/env sh
 
+###
+# Check preconditions
+###
+
 # Verify flutter project is a git repo
 inside_git_repo="$(git rev-parse --is-inside-work-tree 2>/dev/null)"
 if ! [ "$inside_git_repo" ]; then
@@ -12,6 +16,11 @@ if ! [ -f pubspec.yaml ]; then
   printf "Warning: Not executed in flutter root. Couldn't find pubspec.yaml.\n"
   printf "Continuing in case this flutter wrapper is used to create a new project. If so continue with './flutterw create .'\n\n"
 fi
+
+
+###
+# Parse arguments
+###
 
 # Parse arguments
 while [ "$1" != "" ]; do case $1 in
@@ -40,10 +49,47 @@ if [ -z "$VERSION_TAG" ]; then
   fi
 fi
 
-
 printf "Installing Flutter Wrapper $VERSION_TAG\n"
 
-printf "Downloading flutterw\n"
+
+###
+# Add .flutter submodule
+###
+FLUTTER_DIR_NAME='.flutter'
+
+# Check if submodule already exists (when updating flutter wrapper)
+HAS_SUBMODULE=`git submodule | grep .flutter`
+if [ -z "$HAS_SUBMODULE" ]; then
+  printf "adding '.flutter' submodule\n"
+  UPDATED=false
+  # add the flutter submodule
+  git submodule add -b master https://github.com/flutter/flutter.git $FLUTTER_DIR_NAME
+
+  # When submodule failed, abort
+  if [ ! $? -eq 0 ]; then
+    echo "Abort installation of flutterw, couldn't clone flutter" >&2
+    exit 1
+  fi
+else
+  # update url to https
+  printf "Upgrading existing flutter wrapper\n"
+  UPDATED=true
+
+  # Update old ssh url to https
+  USES_SSH=`git config --file=.gitmodules submodule.\.flutter.url | cut -c 1-4`
+  if [ "$USES_SSH" = "git@" ]; then
+    printf "Update .flutter submodule url to https\n"
+    git config --file=.gitmodules submodule.\.flutter.url https://github.com/flutter/flutter.git
+    git add .gitmodules
+    git submodule sync .flutter
+  fi
+fi
+
+
+###
+# Downlaod flutterw exectuable
+###
+printf "Downloading new flutterw\n"
 # Download latest flutterw version
 curl -sO "https://raw.githubusercontent.com/passsy/flutter_wrapper/$VERSION_TAG/flutterw"
 
@@ -60,26 +106,10 @@ sed -i.bak "s/DATE_PLACEHOLDER/$DATE/g" flutterw && rm flutterw.bak
 # add it to git
 git add flutterw
 
-FLUTTER_DIR_NAME='.flutter'
 
-# Check if submodule already exists (when updating flutter wrapper)
-HAS_SUBMODULE=`git submodule | grep .flutter`
-
-if [ -z "$HAS_SUBMODULE" ]; then
-  printf "adding '.flutter' submodule\n"
-  UPDATED=false
-  # add the flutter submodule
-  git submodule add -b master git@github.com:flutter/flutter.git $FLUTTER_DIR_NAME
-
-  # When submodule failed, abort
-  if [ ! $? -eq 0 ]; then
-    echo "Abort installation of flutterw, couldn't clone flutter" >&2
-    exit 1
-  fi
-else
-  UPDATED=true
-fi
-
+###
+# Downlaod flutterw exectuable
+###
 
 # bind this flutter instance to the project (update .packages file)
 ./flutterw packages get
