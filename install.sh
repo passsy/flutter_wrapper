@@ -69,7 +69,7 @@ if [ -z "$HAS_SUBMODULE" ]; then
   printf "adding '.flutter' submodule\n"
   UPDATED=false
   # add the flutter submodule
-  git submodule add -b master git@github.com:flutter/flutter.git $FLUTTER_DIR_NAME
+  git submodule add -b master https://github.com/flutter/flutter.git $FLUTTER_DIR_NAME
 
   # When submodule failed, abort
   if [ ! $? -eq 0 ]; then
@@ -77,7 +77,18 @@ if [ -z "$HAS_SUBMODULE" ]; then
     exit 1
   fi
 else
+  # update url to https
+  printf "Upgrading existing flutter wrapper\n"
   UPDATED=true
+
+  # Update old ssh url to https
+  USES_SSH=`git config --file=.gitmodules submodule.\.flutter.url | cut -c 1-4`
+  if [ "$USES_SSH" = "git@" ]; then
+    printf "Update .flutter submodule url to https\n"
+    git config --file=.gitmodules submodule.\.flutter.url https://github.com/flutter/flutter.git
+    git add .gitmodules
+    git submodule sync .flutter
+  fi
 fi
 
 
