@@ -91,7 +91,12 @@ fi
 ###
 printf "Downloading new flutterw\n"
 # Download latest flutterw version
-curl -sO "https://raw.githubusercontent.com/passsy/flutter_wrapper/$VERSION_TAG/flutterw"
+FLUTTERW_URL="https://raw.githubusercontent.com/passsy/flutter_wrapper/$VERSION_TAG/flutterw"
+curl -sfO "$FLUTTERW_URL"
+if [ "$?" != "0" ]; then
+  printf "Couldn't downlaod flutterw from '$FLUTTERW_URL'\n"
+  exit 1
+fi
 
 # make it executable
 chmod 755 flutterw
