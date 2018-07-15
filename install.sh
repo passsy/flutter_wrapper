@@ -1,5 +1,9 @@
 #!/usr/bin/env sh
 
+###
+# Check preconditions
+###
+
 # Verify flutter project is a git repo
 inside_git_repo="$(git rev-parse --is-inside-work-tree 2>/dev/null)"
 if ! [ "$inside_git_repo" ]; then
@@ -12,6 +16,11 @@ if ! [ -f pubspec.yaml ]; then
   printf "Warning: Not executed in flutter root. Couldn't find pubspec.yaml.\n"
   printf "Continuing in case this flutter wrapper is used to create a new project. If so continue with './flutterw create .'\n\n"
 fi
+
+
+###
+# Parse arguments
+###
 
 # Parse arguments
 while [ "$1" != "" ]; do case $1 in
@@ -40,31 +49,16 @@ if [ -z "$VERSION_TAG" ]; then
   fi
 fi
 
-
 printf "Installing Flutter Wrapper $VERSION_TAG\n"
 
-printf "Downloading flutterw\n"
-# Download latest flutterw version
-curl -sO "https://raw.githubusercontent.com/passsy/flutter_wrapper/$VERSION_TAG/flutterw"
 
-# make it executable
-chmod 755 flutterw
-
-# Replace version string in wrapper
-sed -i.bak "s/VERSION_PLACEHOLDER/$VERSION_TAG/g" flutterw && rm flutterw.bak
-
-# Replace date placeholder in wrapper
-DATE=`date '+%Y-%m-%d %H:%M:%S'`
-sed -i.bak "s/DATE_PLACEHOLDER/$DATE/g" flutterw && rm flutterw.bak
-
-# add it to git
-git add flutterw
-
+###
+# Add .flutter submodule
+###
 FLUTTER_DIR_NAME='.flutter'
 
 # Check if submodule already exists (when updating flutter wrapper)
 HAS_SUBMODULE=`git submodule | grep .flutter`
-
 if [ -z "$HAS_SUBMODULE" ]; then
   printf "adding '.flutter' submodule\n"
   UPDATED=false
@@ -91,6 +85,31 @@ else
   fi
 fi
 
+
+###
+# Downlaod flutterw exectuable
+###
+printf "Downloading new flutterw\n"
+# Download latest flutterw version
+curl -sO "https://raw.githubusercontent.com/passsy/flutter_wrapper/$VERSION_TAG/flutterw"
+
+# make it executable
+chmod 755 flutterw
+
+# Replace version string in wrapper
+sed -i.bak "s/VERSION_PLACEHOLDER/$VERSION_TAG/g" flutterw && rm flutterw.bak
+
+# Replace date placeholder in wrapper
+DATE=`date '+%Y-%m-%d %H:%M:%S'`
+sed -i.bak "s/DATE_PLACEHOLDER/$DATE/g" flutterw && rm flutterw.bak
+
+# add it to git
+git add flutterw
+
+
+###
+# Downlaod flutterw exectuable
+###
 
 # bind this flutter instance to the project (update .packages file)
 ./flutterw packages get
