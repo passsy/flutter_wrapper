@@ -63,7 +63,7 @@ if [ -z "$HAS_SUBMODULE" ]; then
   printf "adding '.flutter' submodule\n"
   UPDATED=false
   # add the flutter submodule
-  git submodule add -b master https://github.com/flutter/flutter.git $FLUTTER_DIR_NAME
+  git submodule add -b stable https://github.com/flutter/flutter.git $FLUTTER_DIR_NAME
 
   # When submodule failed, abort
   if [ ! $? -eq 0 ]; then
@@ -122,7 +122,7 @@ git add flutterw
 if $UPDATED ; then
   printf "\nFlutter Wrapper updated to version $VERSION_TAG\n\n"
 else
-  printf "\nFlutter Wrapper installed (version $VERSION_TAG), initialized with channel master.\n\n"
+  printf "\nFlutter Wrapper installed (version $VERSION_TAG), initialized with channel stable.\n\n"
 fi
 printf "Run your app with:     ./flutterw run\n"
 printf "Switch channel:        ./flutterw channel beta\n"
