@@ -44,7 +44,7 @@ if [ "$(uname)" = "Darwin" ] && [ "$HOME" = "$PWD" ]; then
 fi
 
 # submodule starting with "-" are not initialized
-init_status=`git submodule | git submodule | grep "\ \.flutter\ " | cut -c 1`
+init_status=`git submodule | grep "\ \.flutter$" | cut -c 1`
 
 # Fix not initialized flutter submodule
 if [ "$init_status" = "-" ]; then
