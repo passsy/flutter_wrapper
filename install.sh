@@ -58,7 +58,7 @@ printf "Installing Flutter Wrapper $VERSION_TAG\n"
 FLUTTER_DIR_NAME='.flutter'
 
 # Check if submodule already exists (when updating flutter wrapper)
-HAS_SUBMODULE=`git submodule | grep "\ \.flutter\ "`
+HAS_SUBMODULE=`git submodule | grep "\ \.flutter$"`
 if [ -z "$HAS_SUBMODULE" ]; then
   printf "adding '.flutter' submodule\n"
   UPDATED=false
