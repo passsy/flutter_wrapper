@@ -48,7 +48,7 @@ init_status=`git submodule | grep "\ \.flutter$" | cut -c 1`
 
 # Fix not initialized flutter submodule
 if [ "$init_status" = "-" ]; then
-  echo ".flutter submodule not initizlied. Initializing..."
+  echo ".flutter submodule not initialized. Initializing..."
   git submodule update --init .flutter
 fi
 
