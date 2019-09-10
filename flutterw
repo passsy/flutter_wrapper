@@ -53,7 +53,6 @@ if [ "$init_status" = "-" ]; then
 fi
 
 # Detect detach HEAD and fix it. commands like upgrade expect a valid branch, not a detached HEAD
-
 FLUTTER_SYMBOLIC_REF=`git -C $FLUTTER_SUBMODULE_NAME symbolic-ref -q HEAD`
 if [ -z $FLUTTER_SYMBOLIC_REF ]; then
   echo "Warning: Detected detached HEAD. '$FLUTTER_SUBMODULE_NAME' submodule points to a specific commit, not a branch."
