@@ -6,7 +6,7 @@ FLUTTER_DIR_NAME='.flutter'
 
 # remove wrapper executable via git or fallback just the wrapper file when not
 # known to git
-git rm -f flutterw >> /dev/null 2>&1 || rm flutterw
+git rm -f flutterw >>/dev/null 2>&1 || rm flutterw
 
 # remove submodule
 git submodule deinit -f $FLUTTER_DIR_NAME
@@ -20,5 +20,5 @@ rm -rf .git/modules/$FLUTTER_DIR_NAME
 # remove empty .gitmodules file
 if ! [ -s .gitmodules ]; then
   # try via git first, fallback to just rm when not added to git
-  git rm -f .gitmodules >> /dev/null 2>&1 || rm .gitmodules
+  git rm -f .gitmodules >>/dev/null 2>&1 || rm .gitmodules
 fi

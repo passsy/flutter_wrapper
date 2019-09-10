@@ -16,23 +16,22 @@
 ##
 ##############################################################################
 
-
 # Attempt to set APP_HOME
 # Resolve links: $0 may be a link
 PRG="$0"
 # Need this for relative symlinks.
-while [ -h "$PRG" ] ; do
-    ls=`ls -ld "$PRG"`
-    link=`expr "$ls" : '.*-> \(.*\)$'`
-    if expr "$link" : '/.*' > /dev/null; then
-        PRG="$link"
-    else
-        PRG=`dirname "$PRG"`"/$link"
-    fi
+while [ -h "$PRG" ]; do
+  ls=$(ls -ld "$PRG")
+  link=$(expr "$ls" : '.*-> \(.*\)$')
+  if expr "$link" : '/.*' >/dev/null; then
+    PRG="$link"
+  else
+    PRG=$(dirname "$PRG")"/$link"
+  fi
 done
-SAVED="`pwd`"
-cd "`dirname \"$PRG\"`/" >/dev/null
-APP_HOME="`pwd -P`"
+SAVED="$(pwd)"
+cd "$(dirname \"$PRG\")/" >/dev/null
+APP_HOME="$(pwd -P)"
 cd "$SAVED" >/dev/null
 
 FLUTTER_SUBMODULE_NAME='.flutter'
@@ -44,7 +43,7 @@ if [ "$(uname)" = "Darwin" ] && [ "$HOME" = "$PWD" ]; then
 fi
 
 # submodule starting with "-" are not initialized
-init_status=`git submodule | grep "\ $FLUTTER_SUBMODULE_NAME$" | cut -c 1`
+init_status=$(git submodule | grep "\ $FLUTTER_SUBMODULE_NAME$" | cut -c 1)
 
 # Fix not initialized flutter submodule
 if [ "$init_status" = "-" ]; then
@@ -53,13 +52,13 @@ if [ "$init_status" = "-" ]; then
 fi
 
 # Detect detach HEAD and fix it. commands like upgrade expect a valid branch, not a detached HEAD
-FLUTTER_SYMBOLIC_REF=`git -C $FLUTTER_SUBMODULE_NAME symbolic-ref -q HEAD`
+FLUTTER_SYMBOLIC_REF=$(git -C $FLUTTER_SUBMODULE_NAME symbolic-ref -q HEAD)
 if [ -z $FLUTTER_SYMBOLIC_REF ]; then
   echo "Warning: Detected detached HEAD. '$FLUTTER_SUBMODULE_NAME' submodule points to a specific commit, not a branch."
   echo "You can ignore this warning when you run './flutterw' for the first time after cloning the repository."
-  FLUTTER_REV=`git -C $FLUTTER_SUBMODULE_NAME rev-parse HEAD`
-  FLUTTER_CHANNEL=`git config -f .gitmodules submodule.$FLUTTER_SUBMODULE_NAME.branch`
-  if git -C $FLUTTER_SUBMODULE_NAME branch --contains $FLUTTER_REV | grep $FLUTTER_CHANNEL > /dev/null; then
+  FLUTTER_REV=$(git -C $FLUTTER_SUBMODULE_NAME rev-parse HEAD)
+  FLUTTER_CHANNEL=$(git config -f .gitmodules submodule.$FLUTTER_SUBMODULE_NAME.branch)
+  if git -C $FLUTTER_SUBMODULE_NAME branch --contains $FLUTTER_REV | grep $FLUTTER_CHANNEL >/dev/null; then
     echo "Fixing detached HEAD $FLUTTER_REV. Binding it to channel '$FLUTTER_CHANNEL' (as defined in .gitmodules)."
     git -C $FLUTTER_SUBMODULE_NAME branch -q -f $FLUTTER_CHANNEL $FLUTTER_REV
     git -C $FLUTTER_SUBMODULE_NAME checkout -q $FLUTTER_CHANNEL
@@ -70,7 +69,6 @@ if [ -z $FLUTTER_SYMBOLIC_REF ]; then
     echo "Alternatively change the branch '$FLUTTER_CHANNEL' in .gitmodules to the correct upstream branch (one of stable|beta|dev)."
   fi
 fi
-
 
 # Wrapper tasks done, call flutter binay with all args
 set -e
