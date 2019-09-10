@@ -35,8 +35,8 @@ cd "`dirname \"$PRG\"`/" >/dev/null
 APP_HOME="`pwd -P`"
 cd "$SAVED" >/dev/null
 
-FLUTTER_DIR_NAME='.flutter'
-FLUTTER_DIR="$APP_HOME/$FLUTTER_DIR_NAME"
+FLUTTER_SUBMODULE_NAME='.flutter'
+FLUTTER_DIR="$APP_HOME/$FLUTTER_SUBMODULE_NAME"
 
 # by default we should be in the correct project dir, but when run from Finder on Mac, the cwd is wrong
 if [ "$(uname)" = "Darwin" ] && [ "$HOME" = "$PWD" ]; then
@@ -44,14 +44,59 @@ if [ "$(uname)" = "Darwin" ] && [ "$HOME" = "$PWD" ]; then
 fi
 
 # submodule starting with "-" are not initialized
-init_status=`git submodule | grep "\ \.flutter$" | cut -c 1`
+init_status=`git submodule | grep "\ $FLUTTER_SUBMODULE_NAME$" | cut -c 1`
 
 # Fix not initialized flutter submodule
 if [ "$init_status" = "-" ]; then
-  echo ".flutter submodule not initialized. Initializing..."
-  git submodule update --init .flutter
+  echo "$FLUTTER_SUBMODULE_NAME submodule not initialized. Initializing..."
+  git submodule update --init $FLUTTER_SUBMODULE_NAME
 fi
+
+# Detect detach HEAD and fix it. commands like upgrade expect a valid branch, not a detached HEAD
+FLUTTER_SYMBOLIC_REF=`git -C $FLUTTER_SUBMODULE_NAME symbolic-ref -q HEAD`
+if [ -z $FLUTTER_SYMBOLIC_REF ]; then
+  echo "Warning: Detected detached HEAD. '$FLUTTER_SUBMODULE_NAME' submodule points to a specific commit, not a branch."
+  echo "You can ignore this warning when you run './flutterw' for the first time after cloning the repository."
+  FLUTTER_REV=`git -C $FLUTTER_SUBMODULE_NAME rev-parse HEAD`
+  FLUTTER_CHANNEL=`git config -f .gitmodules submodule.$FLUTTER_SUBMODULE_NAME.branch`
+  if git -C $FLUTTER_SUBMODULE_NAME branch --contains $FLUTTER_REV | grep $FLUTTER_CHANNEL > /dev/null; then
+    echo "Fixing detached HEAD $FLUTTER_REV. Binding it to channel '$FLUTTER_CHANNEL' (as defined in .gitmodules)."
+    git -C $FLUTTER_SUBMODULE_NAME branch -q -f $FLUTTER_CHANNEL $FLUTTER_REV
+    git -C $FLUTTER_SUBMODULE_NAME checkout -q $FLUTTER_CHANNEL
+    echo "Fixed! './flutterw upgrade' now works without problems!"
+  else
+    echo "Warning: Commit $FLUTTER_REV in submodule '$FLUTTER_SUBMODULE_NAME' is not part of the branch '$FLUTTER_CHANNEL' as defined in .gitmodules"
+    echo "You have to manually switch to a valid branch (i.e. './flutterw channel stable') or './flutterw upgrade' will fail"
+    echo "Alternatively change the branch '$FLUTTER_CHANNEL' in .gitmodules to the correct upstream branch (one of stable|beta|dev)."
+  fi
+fi
+
 
 # Wrapper tasks done, call flutter binay with all args
 set -e
 "$FLUTTER_DIR/bin/flutter" "$@"
+
+# Post flutterw tasks. exit code from /bin/flutterw will be used as final exit
+FLUTTER_EXIT_STATUS=$?
+if [ $FLUTTER_EXIT_STATUS -eq 0 ]; then
+
+  # ./flutterw channel CHANNEL
+  if echo $@ | grep -q "channel"; then
+    # make sure .gitmodules is updated as well
+    CHANNEL=${2} # second arg
+    git config -f .gitmodules submodule.$FLUTTER_SUBMODULE_NAME.branch $CHANNEL
+    # makes sure nobody forgets to do commit all changed files
+    git add .gitmodules
+    git add $FLUTTER_SUBMODULE_NAME
+  fi
+
+  # ./flutterw upgrade
+  if echo $@ | grep -q "upgrade"; then
+    # makes sure nobody forgets to do commit the changed submodule
+    git add $FLUTTER_SUBMODULE_NAME
+    # flutter packages get runs automatically. Stage those changes as well
+    git add pubspec.lock
+  fi
+fi
+
+exit $FLUTTER_EXIT_STATUS
