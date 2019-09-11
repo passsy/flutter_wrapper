@@ -64,11 +64,15 @@ Don't forget to commit the submodule changes.
 
 To update the flutter wrapper to the latest version run the install command again:
 
-> `sh -c "$(curl -fsSL https://raw.githubusercontent.com/passsy/flutter_wrapper/master/install.sh)"`
+```bash
+sh -c "$(curl -fsSL https://raw.githubusercontent.com/passsy/flutter_wrapper/master/install.sh)"
+```
 
 To update the flutter wrapper to a specific verssion, use the `-t <tag/branch>` (i.e. `v1.0.0`)
 
-> `sh -c "curl -fsSL https://raw.githubusercontent.com/passsy/flutter_wrapper/master/install.sh" | bash /dev/stdin -t v1.0.0`
+```bash
+sh -c "curl -fsSL https://raw.githubusercontent.com/passsy/flutter_wrapper/master/install.sh" | bash /dev/stdin -t v1.0.0
+```
 
 
 ### Uninstall flutterw
@@ -77,7 +81,9 @@ Sorry to let you go!
 Removing submodules is hard, that's why I did the hard work for you.
 Simply run this command from the root of your flutter project and the uninstall script will cleanup everything.
 
-> `sh -c "$(curl -fsSL https://raw.githubusercontent.com/passsy/flutter_wrapper/master/uninstall.sh)"`
+```bash
+sh -c "$(curl -fsSL https://raw.githubusercontent.com/passsy/flutter_wrapper/master/uninstall.sh)"
+```
 
 Bye :wave:
 
