@@ -79,7 +79,7 @@ FLUTTER_EXIT_STATUS=$?
 if [ $FLUTTER_EXIT_STATUS -eq 0 ]; then
 
   # ./flutterw channel CHANNEL
-  if echo $@ | grep -q "channel"; then
+  if echo "$@" | grep -q "channel"; then
     # make sure .gitmodules is updated as well
     CHANNEL=${2} # second arg
     git config -f .gitmodules submodule.$FLUTTER_SUBMODULE_NAME.branch $CHANNEL
@@ -89,7 +89,7 @@ if [ $FLUTTER_EXIT_STATUS -eq 0 ]; then
   fi
 
   # ./flutterw upgrade
-  if echo $@ | grep -q "upgrade"; then
+  if echo "$@" | grep -q "upgrade"; then
     # makes sure nobody forgets to do commit the changed submodule
     git add $FLUTTER_SUBMODULE_NAME
     # flutter packages get runs automatically. Stage those changes as well
