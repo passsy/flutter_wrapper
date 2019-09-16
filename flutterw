@@ -58,6 +58,15 @@ if [ -z $FLUTTER_SYMBOLIC_REF ]; then
   echo "You can ignore this warning when you run './flutterw' for the first time after cloning the repository."
   FLUTTER_REV=$(git -C $FLUTTER_SUBMODULE_NAME rev-parse HEAD)
   FLUTTER_CHANNEL=$(git config -f .gitmodules submodule.$FLUTTER_SUBMODULE_NAME.branch)
+
+  # Make sure channel is fetched
+  # Remove branch because it might be moved to an unrelated commit where ff pull isn't possible
+  git -C $FLUTTER_SUBMODULE_NAME branch -q -D $FLUTTER_CHANNEL
+  git -C $FLUTTER_SUBMODULE_NAME fetch -q origin
+  git -C $FLUTTER_SUBMODULE_NAME checkout -q $FLUTTER_CHANNEL
+  # Go back to pinned commit
+  git -C $FLUTTER_SUBMODULE_NAME checkout -q $FLUTTER_REV
+  
   if git -C $FLUTTER_SUBMODULE_NAME branch --contains $FLUTTER_REV | grep $FLUTTER_CHANNEL >/dev/null; then
     echo "Fixing detached HEAD $FLUTTER_REV. Binding it to channel '$FLUTTER_CHANNEL' (as defined in .gitmodules)."
     git -C $FLUTTER_SUBMODULE_NAME branch -q -f $FLUTTER_CHANNEL $FLUTTER_REV
