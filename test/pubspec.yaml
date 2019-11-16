@@ -1,0 +1,9 @@
+name: flutter_wrapper_test
+
+environment:
+  sdk: '>=2.6.0 <3.0.0'
+
+dev_dependencies:
+  lint: ^0.3.0
+  test: ^1.6.0
+  process_run: ^0.10.3
