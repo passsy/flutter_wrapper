@@ -20,7 +20,7 @@
 # Resolve links: $0 may be a link
 PRG="$0"
 # Need this for relative symlinks.
-while [ -h "$PRG" ]; do
+while [[ -h "$PRG" ]]; do
   ls=$(ls -ld "$PRG")
   link=$(expr "$ls" : '.*-> \(.*\)$')
   if expr "$link" : '/.*' >/dev/null; then
@@ -38,7 +38,7 @@ FLUTTER_SUBMODULE_NAME='.flutter'
 FLUTTER_DIR="$APP_HOME/$FLUTTER_SUBMODULE_NAME"
 
 # by default we should be in the correct project dir, but when run from Finder on Mac, the cwd is wrong
-if [ "$(uname)" = "Darwin" ] && [ "$HOME" = "$PWD" ]; then
+if [[ "$(uname)" = "Darwin" ]] && [[ "$HOME" = "$PWD" ]]; then
   cd "$(dirname "$0")"
 fi
 
@@ -46,36 +46,35 @@ fi
 init_status=$(git submodule | grep "\ $FLUTTER_SUBMODULE_NAME$" | cut -c 1)
 
 # Fix not initialized flutter submodule
-if [ "$init_status" = "-" ]; then
+if [[ "$init_status" = "-" ]]; then
   echo "$FLUTTER_SUBMODULE_NAME submodule not initialized. Initializing..."
-  git submodule update --init $FLUTTER_SUBMODULE_NAME
+  git submodule update --init ${FLUTTER_SUBMODULE_NAME}
 fi
 
 # Detect detach HEAD and fix it. commands like upgrade expect a valid branch, not a detached HEAD
-FLUTTER_SYMBOLIC_REF=$(git -C $FLUTTER_SUBMODULE_NAME symbolic-ref -q HEAD)
-if [ -z $FLUTTER_SYMBOLIC_REF ]; then
-  echo "Warning: Detected detached HEAD. '$FLUTTER_SUBMODULE_NAME' submodule points to a specific commit, not a branch."
-  echo "You can ignore this warning when you run './flutterw' for the first time after cloning the repository."
-  FLUTTER_REV=$(git -C $FLUTTER_SUBMODULE_NAME rev-parse HEAD)
-  FLUTTER_CHANNEL=$(git config -f .gitmodules submodule.$FLUTTER_SUBMODULE_NAME.branch)
+FLUTTER_SYMBOLIC_REF=$(git -C ${FLUTTER_SUBMODULE_NAME} symbolic-ref -q HEAD)
+if [[ -z ${FLUTTER_SYMBOLIC_REF} ]]; then
+  FLUTTER_REV=$(git -C ${FLUTTER_SUBMODULE_NAME} rev-parse HEAD)
+  FLUTTER_CHANNEL=$(git config -f .gitmodules submodule.${FLUTTER_SUBMODULE_NAME}.branch)
 
-  # Make sure channel is fetched
-  # Remove branch because it might be moved to an unrelated commit where ff pull isn't possible
-  git -C $FLUTTER_SUBMODULE_NAME branch -q -D $FLUTTER_CHANNEL
-  git -C $FLUTTER_SUBMODULE_NAME fetch -q origin
-  git -C $FLUTTER_SUBMODULE_NAME checkout -q $FLUTTER_CHANNEL
-  # Go back to pinned commit
-  git -C $FLUTTER_SUBMODULE_NAME checkout -q $FLUTTER_REV
-  
-  if git -C $FLUTTER_SUBMODULE_NAME branch --contains $FLUTTER_REV | grep $FLUTTER_CHANNEL >/dev/null; then
-    echo "Fixing detached HEAD $FLUTTER_REV. Binding it to channel '$FLUTTER_CHANNEL' (as defined in .gitmodules)."
-    git -C $FLUTTER_SUBMODULE_NAME branch -q -f $FLUTTER_CHANNEL $FLUTTER_REV
-    git -C $FLUTTER_SUBMODULE_NAME checkout -q $FLUTTER_CHANNEL
-    echo "Fixed! './flutterw upgrade' now works without problems!"
+  if [[ -z $FLUTTER_CHANNEL ]]; then
+    echo "Warning: Submodule '$FLUTTER_SUBMODULE_NAME' doesn't point to an official Flutter channel \
+            (one of stable|beta|dev|master). './flutterw upgrade' will fail without a channel."
+    echo "Fix this by adding a specific channel with:"
+    echo "\t- './flutterw channel <channel>' or"
+    echo "\t- Add 'branch = <channel>' to '$FLUTTER_SUBMODULE_NAME' submodule in .gitmodules"
   else
-    echo "Warning: Commit $FLUTTER_REV in submodule '$FLUTTER_SUBMODULE_NAME' is not part of the branch '$FLUTTER_CHANNEL' as defined in .gitmodules"
-    echo "You have to manually switch to a valid branch (i.e. './flutterw channel stable') or './flutterw upgrade' will fail"
-    echo "Alternatively change the branch '$FLUTTER_CHANNEL' in .gitmodules to the correct upstream branch (one of stable|beta|dev)."
+    echo "Fixing detached HEAD: '$FLUTTER_SUBMODULE_NAME' submodule points to a specific commit $FLUTTER_REV, not channel '$FLUTTER_CHANNEL' (as defined in .gitmodules)."
+    # Make sure channel is fetched
+    # Remove old channel branch because it might be moved to an unrelated commit where fast-forward pull isn't possible
+    git -C ${FLUTTER_SUBMODULE_NAME} branch -q -D ${FLUTTER_CHANNEL} 2> /dev/null || true
+    git -C ${FLUTTER_SUBMODULE_NAME} fetch -q origin
+
+    # bind current HEAD to channel defined in .gitmodules
+    git -C ${FLUTTER_SUBMODULE_NAME} checkout -q -b ${FLUTTER_CHANNEL} ${FLUTTER_REV}
+    git -C ${FLUTTER_SUBMODULE_NAME} branch -q -u origin/${FLUTTER_CHANNEL} ${FLUTTER_CHANNEL}
+    echo "Fixed! Migrated to channel '$FLUTTER_CHANNEL' while staying at commit $FLUTTER_REV. './flutterw upgrade' now works without problems!"
+    git -C ${FLUTTER_SUBMODULE_NAME} status -bs
   fi
 fi
 
@@ -85,25 +84,25 @@ set -e
 
 # Post flutterw tasks. exit code from /bin/flutterw will be used as final exit
 FLUTTER_EXIT_STATUS=$?
-if [ $FLUTTER_EXIT_STATUS -eq 0 ]; then
+if [[ ${FLUTTER_EXIT_STATUS} -eq 0 ]]; then
 
   # ./flutterw channel CHANNEL
   if echo "$@" | grep -q "channel"; then
     # make sure .gitmodules is updated as well
     CHANNEL=${2} # second arg
-    git config -f .gitmodules submodule.$FLUTTER_SUBMODULE_NAME.branch $CHANNEL
+    git config -f .gitmodules submodule.${FLUTTER_SUBMODULE_NAME}.branch ${CHANNEL}
     # makes sure nobody forgets to do commit all changed files
     git add .gitmodules
-    git add $FLUTTER_SUBMODULE_NAME
+    git add ${FLUTTER_SUBMODULE_NAME}
   fi
 
   # ./flutterw upgrade
   if echo "$@" | grep -q "upgrade"; then
     # makes sure nobody forgets to do commit the changed submodule
-    git add $FLUTTER_SUBMODULE_NAME
+    git add ${FLUTTER_SUBMODULE_NAME}
     # flutter packages get runs automatically. Stage those changes as well
     git add pubspec.lock
   fi
 fi
 
-exit $FLUTTER_EXIT_STATUS
+exit ${FLUTTER_EXIT_STATUS}
