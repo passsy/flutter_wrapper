@@ -1,5 +1,5 @@
 #!/usr/bin/env sh
-
+set -x
 ###
 # Check preconditions
 ###
@@ -12,6 +12,7 @@ if ! [ "$inside_git_repo" ]; then
 fi
 
 # Make sure this is the root of the flutter dir (search for pubspec.yaml)
+# flutterw should be placed next to
 if ! [ -f pubspec.yaml ]; then
   printf "Warning: Not executed in flutter root. Couldn't find pubspec.yaml.\n"
   printf "Continuing in case this flutter wrapper is used to create a new project. If so continue with './flutterw create .'\n\n"
@@ -54,15 +55,29 @@ printf "Installing Flutter Wrapper $VERSION_TAG\n"
 ###
 # Add .flutter submodule
 ###
-FLUTTER_DIR_NAME='.flutter'
+FLUTTER_SUBMODULE_NAME='.flutter'
+GIT_HOME=$(git rev-parse --show-toplevel)
+FLUTTER_DIR="$GIT_HOME/$FLUTTER_SUBMODULE_NAME"
 
 # Check if submodule already exists (when updating flutter wrapper)
-HAS_SUBMODULE=$(git submodule | grep "\ \.flutter")
-if [ -z "$HAS_SUBMODULE" ]; then
-  printf "adding '.flutter' submodule\n"
+HAS_SUBMODULE=$(git submodule | grep "\ ${FLUTTER_SUBMODULE_NAME}")
+if [ -z "${HAS_SUBMODULE}" ]; then
+  printf "adding '${FLUTTER_SUBMODULE_NAME}' submodule\n"
   UPDATED=false
+
+  # create relative to <gitRoot>/.flutter
+  source=$PWD
+  target=${GIT_HOME}/${FLUTTER_SUBMODULE_NAME}
+  common_part=$source
+  back=
+  while [ "${target#$common_part}" = "${target}" ]; do
+    common_part=$(dirname $common_part)
+    back="../${back}"
+  done
+  CLONE_TO=${back}${target#$common_part/}
+
   # add the flutter submodule
-  git submodule add -b stable https://github.com/flutter/flutter.git $FLUTTER_DIR_NAME
+  git submodule add -b stable  https://github.com/flutter/flutter.git $CLONE_TO
 
   # When submodule failed, abort
   if [ ! $? -eq 0 ]; then
@@ -75,12 +90,14 @@ else
   UPDATED=true
 
   # Update old ssh url to https
-  USES_SSH=$(git config --file=.gitmodules submodule.\.flutter.url | cut -c 1-4)
+  SUBMODULE_PATH=$(git config -f ${GIT_HOME}/.gitmodules submodule.)
+
+  USES_SSH=$(git config -f ${GIT_HOME}/.gitmodules submodule.${SUBMODULE_PATH}.url | cut -c 1-4)
   if [ "$USES_SSH" = "git@" ]; then
-    printf "Update .flutter submodule url to https\n"
-    git config --file=.gitmodules submodule.\.flutter.url https://github.com/flutter/flutter.git
-    git add .gitmodules
-    git submodule sync .flutter
+    printf "Update $FLUTTER_SUBMODULE_NAME submodule url to https\n"
+    git config -f ${GIT_HOME}/.gitmodules submodule.${SUBMODULE_PATH}.url https://github.com/flutter/flutter.git
+    git add ${GIT_HOME}/.gitmodules
+    git submodule sync ${FLUTTER_SUBMODULE_NAME}
   fi
 fi
 
