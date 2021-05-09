@@ -43,13 +43,10 @@ if [ "$(uname)" = "Darwin" ] && [ "$HOME" = "$PWD" ]; then
   cd "$(dirname "$0")"
 fi
 
-# submodule starting with "-" are not initialized
-init_status=$(git submodule | grep "\ $FLUTTER_SUBMODULE_NAME$" | cut -c 1)
-
 # Fix not initialized flutter submodule
-if [ "$init_status" = "-" ]; then
+if [ ! -f "${FLUTTER_DIR}/bin/flutter" ]; then
   echo "$FLUTTER_SUBMODULE_NAME submodule not initialized. Initializing..."
-  git submodule update --init ${FLUTTER_SUBMODULE_NAME}
+  git submodule update --init "${FLUTTER_DIR}"
 fi
 
 # Detect detach HEAD and fix it. commands like upgrade expect a valid branch, not a detached HEAD
