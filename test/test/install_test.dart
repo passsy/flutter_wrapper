@@ -30,8 +30,7 @@ void main() {
       setUpAll(() async {
         final dir = const LocalFileSystem().systemTempDirectory.createTempSync('root');
         addTearDown(() {
-          // TODO enable before commit, only for debugging
-          // dir.deleteSync(recursive: true);
+          dir.deleteSync(recursive: true);
         });
         gitRootDir = appDir = dir.childDirectory('myApp');
         assert(gitRootDir == appDir);
@@ -82,8 +81,7 @@ void main() {
       setUpAll(() async {
         gitRootDir = const LocalFileSystem().systemTempDirectory.createTempSync('root');
         addTearDown(() {
-          // TODO enable before commit, only for debugging
-          //gitRootDir.deleteSync(recursive: true);
+          gitRootDir.deleteSync(recursive: true);
         });
         // git repo in root, flutterw in appDir
         appDir = gitRootDir.childDirectory('myApp')..createSync();
