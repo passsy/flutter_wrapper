@@ -16,14 +16,22 @@ Future<void> runInstallScript({String? workingDirectory}) async {
   final flutterRepoPath = lines.firstWhere((line) => line.contains("Flutter version")).split(" ").last;
   print("doctor exit code ${await doctor.exitCode}");
 
+  const LocalFileSystem().currentDirectory.childDirectory('build').createSync(recursive: true);
+  final File testableInstall = repoRoot.childFile('install.sh').copySync('build/testable_install.sh');
+  {
+    await run('chmod 755 ${testableInstall.path}');
+    final modified = testableInstall
+        .readAsStringSync()
+        .replaceFirst('https://github.com/flutter/flutter.git', flutterRepoPath)
+        .replaceFirst('https://raw.githubusercontent.com/passsy/flutter_wrapper/\$VERSION_TAG/flutterw',
+            'file://${repoRoot.childFile('flutterw').path}');
+    testableInstall.writeAsStringSync(modified);
+  }
+
   await run(
-    "${repoRoot.childFile('install.sh').path}",
-    name: 'install.sh',
+    "${testableInstall.absolute.path}",
+    name: 'install.sh (testable)',
     workingDirectory: workingDirectory,
-    environment: {
-      // set a custom path making the tests much faster by cloning from local repo
-      'TEST_FLUTTER_PATH': "$flutterRepoPath",
-    },
   );
 }
 
