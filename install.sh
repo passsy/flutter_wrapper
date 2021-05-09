@@ -77,7 +77,7 @@ if [ -z "${HAS_SUBMODULE}" ]; then
   CLONE_TO=${back}${target#$common_part/}
 
   # add the flutter submodule
-  git submodule add -b stable  https://github.com/flutter/flutter.git $CLONE_TO
+  git submodule add -b stable https://github.com/flutter/flutter.git "${CLONE_TO}"
 
   # When submodule failed, abort
   if [ ! $? -eq 0 ]; then
