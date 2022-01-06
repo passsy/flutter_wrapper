@@ -85,7 +85,7 @@ FLUTTER_EXIT_STATUS=$?
 if [ ${FLUTTER_EXIT_STATUS} -eq 0 ]; then
 
   # ./flutterw channel CHANNEL
-  if [ echo "$@" | grep -q "channel" ] && [ ! -z "$2" ]; then
+  if [ -z "$(echo "$@" | grep -q "channel")" ] && [ -n "$2" ]; then
     # make sure .gitmodules is updated as well
     CHANNEL=${2} # second arg
     git config -f "${GIT_HOME}/.gitmodules" "submodule.${FLUTTER_SUBMODULE_NAME}.branch" "${CHANNEL}"
