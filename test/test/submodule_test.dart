@@ -1,10 +1,6 @@
-import 'dart:async';
-import 'dart:io' as io;
-
+import 'package:cli_script/cli_script.dart';
 import 'package:file/local.dart';
 import 'package:test/test.dart';
-import 'package:cli_script/cli_script.dart';
-import 'package:file/file.dart';
 
 import 'install_test.dart';
 
