@@ -92,7 +92,7 @@ void main() {
     );
 
     test(
-      'flutter channel without second arg called from package updates gitmodules in root',
+      'flutter channel without second arg called from package does not update gitmodules in root',
       () async {
         final repo = const LocalFileSystem().systemTempDirectory.createTempSync('repo');
         addTearDown(() {
