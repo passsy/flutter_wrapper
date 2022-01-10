@@ -95,14 +95,14 @@ if [ ${FLUTTER_EXIT_STATUS} -eq 0 ]; then
       git config -f "${GIT_HOME}/.gitmodules" "submodule.${FLUTTER_SUBMODULE_NAME}.branch" "${CHANNEL}"
       # makes sure nobody forgets to do commit all changed files
       git add "${GIT_HOME}/.gitmodules"
-      git add "${GIT_HOME}/${FLUTTER_SUBMODULE_NAME}"
+      git add "${FLUTTER_DIR}"
     fi
   fi
 
   # ./flutterw upgrade
   if echo "$@" | grep -q "upgrade"; then
     # makes sure nobody forgets to do commit the changed submodule
-    git add "${GIT_HOME}/${FLUTTER_SUBMODULE_NAME}"
+    git add "${FLUTTER_DIR}"
     # flutter packages get runs automatically. Stage those changes as well
     if [ -f pubspec.lock ]; then
       git add pubspec.lock
