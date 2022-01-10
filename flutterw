@@ -76,7 +76,7 @@ if [ -z "${FLUTTER_SYMBOLIC_REF}" ]; then
   fi
 fi
 
-# Wrapper tasks done, call flutter binay with all args
+# Wrapper tasks done, call flutter binary with all args
 set -e
 "$FLUTTER_DIR/bin/flutter" "$@"
 
