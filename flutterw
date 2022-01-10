@@ -53,7 +53,7 @@ fi
 FLUTTER_SYMBOLIC_REF=$(git -C ${FLUTTER_DIR} symbolic-ref -q HEAD)
 if [ -z ${FLUTTER_SYMBOLIC_REF} ]; then
   FLUTTER_REV=$(git -C ${FLUTTER_DIR} rev-parse HEAD)
-  FLUTTER_CHANNEL=$(git config -f .gitmodules submodule.${FLUTTER_SUBMODULE_NAME}.branch)
+  FLUTTER_CHANNEL=$(git -C ${GIT_HOME} config -f .gitmodules submodule.${FLUTTER_SUBMODULE_NAME}.branch)
 
   if [ -z $FLUTTER_CHANNEL ]; then
     echo "Warning: Submodule '$FLUTTER_SUBMODULE_NAME' doesn't point to an official Flutter channel \
