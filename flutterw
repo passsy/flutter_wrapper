@@ -79,6 +79,7 @@ fi
 # Wrapper tasks done, call flutter binary with all args
 set -e
 "$FLUTTER_DIR/bin/flutter" "$@"
+set +e
 
 # Post flutterw tasks. exit code from /bin/flutterw will be used as final exit
 FLUTTER_EXIT_STATUS=$?
