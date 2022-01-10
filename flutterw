@@ -18,7 +18,6 @@
 
 echoerr() { echo "$@" 1>&2; }
 
-
 # Attempt to set APP_HOME
 # Resolve links: $0 may be a link
 PRG="$0"
@@ -59,11 +58,11 @@ if [ -z "${FLUTTER_SYMBOLIC_REF}" ]; then
   FLUTTER_CHANNEL=$(git -C "${GIT_HOME}" config -f .gitmodules submodule.${FLUTTER_SUBMODULE_NAME}.branch)
 
   if [ -z "${FLUTTER_CHANNEL}" ]; then
-    echo "Warning: Submodule '$FLUTTER_SUBMODULE_NAME' doesn't point to an official Flutter channel \
+    echoerr "Warning: Submodule '$FLUTTER_SUBMODULE_NAME' doesn't point to an official Flutter channel \
 (one of stable|beta|dev|master). './flutterw upgrade' will fail without a channel."
-    echo "Fix this by adding a specific channel with:"
-    echo " - './flutterw channel <channel>' or"
-    echo " - Add 'branch = <channel>' to '$FLUTTER_SUBMODULE_NAME' submodule in .gitmodules"
+    echoerr "Fix this by adding a specific channel with:"
+    echoerr " - './flutterw channel <channel>' or"
+    echoerr " - Add 'branch = <channel>' to '$FLUTTER_SUBMODULE_NAME' submodule in .gitmodules"
   else
     echoerr "Fixing detached HEAD: '$FLUTTER_SUBMODULE_NAME' submodule points to a specific commit $FLUTTER_REV, not channel '$FLUTTER_CHANNEL' (as defined in .gitmodules)."
     # Make sure channel is fetched
@@ -74,7 +73,7 @@ if [ -z "${FLUTTER_SYMBOLIC_REF}" ]; then
     # bind current HEAD to channel defined in .gitmodules
     git -C "${FLUTTER_DIR}" checkout -q -b "${FLUTTER_CHANNEL}" "${FLUTTER_REV}"
     git -C "${FLUTTER_DIR}" branch -q -u "origin/${FLUTTER_CHANNEL}" "${FLUTTER_CHANNEL}"
-    echo "Fixed! Migrated to channel '$FLUTTER_CHANNEL' while staying at commit $FLUTTER_REV. './flutterw upgrade' now works without problems!"
+    echoerr "Fixed! Migrated to channel '$FLUTTER_CHANNEL' while staying at commit $FLUTTER_REV. './flutterw upgrade' now works without problems!"
     git -C "${FLUTTER_DIR}" status -bs
   fi
 fi
