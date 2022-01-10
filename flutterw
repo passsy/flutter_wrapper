@@ -85,13 +85,15 @@ FLUTTER_EXIT_STATUS=$?
 if [ ${FLUTTER_EXIT_STATUS} -eq 0 ]; then
 
   # ./flutterw channel CHANNEL
-  if [ -z "$(echo "$@" | grep -q "channel")" ] && [ -n "$2" ]; then
-    # make sure .gitmodules is updated as well
-    CHANNEL=${2} # second arg
-    git config -f "${GIT_HOME}/.gitmodules" "submodule.${FLUTTER_SUBMODULE_NAME}.branch" "${CHANNEL}"
-    # makes sure nobody forgets to do commit all changed files
-    git add "${GIT_HOME}/.gitmodules"
-    git add "${GIT_HOME}/${FLUTTER_SUBMODULE_NAME}"
+  if echo "$@" | grep -q "channel"; then
+    if [ -n "$2" ]; then
+      # make sure .gitmodules is updated as well
+      CHANNEL=${2} # second arg
+      git config -f "${GIT_HOME}/.gitmodules" "submodule.${FLUTTER_SUBMODULE_NAME}.branch" "${CHANNEL}"
+      # makes sure nobody forgets to do commit all changed files
+      git add "${GIT_HOME}/.gitmodules"
+      git add "${GIT_HOME}/${FLUTTER_SUBMODULE_NAME}"
+    fi
   fi
 
   # ./flutterw upgrade
