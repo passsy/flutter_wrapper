@@ -100,7 +100,7 @@ if [ ${FLUTTER_EXIT_STATUS} -eq 0 ]; then
   # ./flutterw upgrade
   if echo "$@" | grep -q "upgrade"; then
     # makes sure nobody forgets to do commit the changed submodule
-    git add ${FLUTTER_SUBMODULE_NAME}
+    git add "${FLUTTER_SUBMODULE_NAME}"
     # flutter packages get runs automatically. Stage those changes as well
     git add pubspec.lock
   fi
