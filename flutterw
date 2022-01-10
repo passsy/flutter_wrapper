@@ -16,6 +16,9 @@
 ##
 ##############################################################################
 
+echoerr() { echo "$@" 1>&2; }
+
+
 # Attempt to set APP_HOME
 # Resolve links: $0 may be a link
 PRG="$0"
@@ -45,7 +48,7 @@ fi
 
 # Fix not initialized flutter submodule
 if [ ! -f "${FLUTTER_DIR}/bin/flutter" ]; then
-  echo "$FLUTTER_SUBMODULE_NAME submodule not initialized. Initializing..."
+  echoerr "$FLUTTER_SUBMODULE_NAME submodule not initialized. Initializing..."
   git submodule update --init "${FLUTTER_DIR}"
 fi
 
@@ -62,7 +65,7 @@ if [ -z "${FLUTTER_SYMBOLIC_REF}" ]; then
     echo " - './flutterw channel <channel>' or"
     echo " - Add 'branch = <channel>' to '$FLUTTER_SUBMODULE_NAME' submodule in .gitmodules"
   else
-    echo "Fixing detached HEAD: '$FLUTTER_SUBMODULE_NAME' submodule points to a specific commit $FLUTTER_REV, not channel '$FLUTTER_CHANNEL' (as defined in .gitmodules)."
+    echoerr "Fixing detached HEAD: '$FLUTTER_SUBMODULE_NAME' submodule points to a specific commit $FLUTTER_REV, not channel '$FLUTTER_CHANNEL' (as defined in .gitmodules)."
     # Make sure channel is fetched
     # Remove old channel branch because it might be moved to an unrelated commit where fast-forward pull isn't possible
     git -C "${FLUTTER_DIR}" branch -q -D "${FLUTTER_CHANNEL}" 2> /dev/null || true
