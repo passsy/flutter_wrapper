@@ -1,10 +1,8 @@
-import 'dart:async';
-import 'dart:io' as io;
+// ignore_for_file: avoid_print
 
+import 'package:cli_script/cli_script.dart';
 import 'package:file/local.dart';
 import 'package:test/test.dart';
-import 'package:cli_script/cli_script.dart';
-import 'package:file/file.dart';
 
 import 'install_test.dart';
 
@@ -27,7 +25,7 @@ void main() {
 
       // Make sure flutterw can be executed in package
       final script =
-          Script.capture((_) async => await run('./../../flutterw', workingDirectory: package.absolute.path));
+          Script.capture((_) async => run('./../../flutterw', workingDirectory: package.absolute.path));
       final output = await script.combineOutput().text;
       print(output);
       expect(output, isNot(contains('fatal: cannot change to \'\.flutter\': No such file or directory')));

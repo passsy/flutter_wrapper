@@ -1,10 +1,12 @@
+// ignore_for_file: avoid_print
+
 import 'dart:async';
 import 'dart:io' as io;
 
-import 'package:file/local.dart';
-import 'package:test/test.dart';
 import 'package:cli_script/cli_script.dart';
 import 'package:file/file.dart';
+import 'package:file/local.dart';
+import 'package:test/test.dart';
 
 void main() {
   group('install', () {
@@ -49,7 +51,7 @@ void main() {
 
       test('flutterw is executable', () async {
         final flutterw = appDir.childFile('flutterw');
-        final script = Script.capture((_) async => await run("stat ${flutterw.absolute.path}"));
+        final script = Script.capture((_) async => run("stat ${flutterw.absolute.path}"));
         expect(await script.stdout.text, contains("-rwxr-xr-x"));
       });
 
@@ -97,7 +99,7 @@ void main() {
 
       test('subdir flutterw is executable', () async {
         final flutterw = appDir.childFile('flutterw');
-        final script = Script.capture((_) async => await run("stat ${flutterw.absolute.path}"));
+        final script = Script.capture((_) async => run("stat ${flutterw.absolute.path}"));
         expect(await script.stdout.text, contains("-rwxr-xr-x"));
       });
 
@@ -127,7 +129,7 @@ Future<void> runInstallScript({String? workingDirectory}) async {
   final repoRoot = const LocalFileSystem().currentDirectory.parent;
   // Get path from line
   //     • Flutter version 2.2.0-10.1.pre at /usr/local/Caskroom/flutter/latest/flutter
-  final doctor = Script.capture((_) async => await run('flutter doctor -v'));
+  final doctor = Script.capture((_) async => run('flutter doctor -v'));
   final lines = await doctor.stdout.lines.toList();
   final flutterRepoPath = lines.firstWhere((line) => line.contains("Flutter version")).split(" ").last;
   print("doctor exit code ${await doctor.exitCode}");
