@@ -1,0 +1,27 @@
+name: nightly
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+  workflow_dispatch:
+  schedule:
+    # Every night at 03:00
+    - cron: '0 3 * * *'
+
+jobs:
+  nightly:
+    runs-on: ubuntu-latest
+
+    container:
+      image: cirrusci/flutter:latest
+
+    steps:
+      - uses: actions/checkout@v2.3.4
+      - run: |
+          cd test
+          dart packages get
+      - run: |
+          cd test
+          dart run test
