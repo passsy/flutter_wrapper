@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
 
     container:
-      image: fischerscode/flutter:latest
+      image: fischerscode/flutter-sudo:latest
 
     steps:
       - uses: actions/checkout@v2.3.4
