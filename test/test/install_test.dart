@@ -41,7 +41,7 @@ void main() {
       late Directory appDir;
 
       tearDownAll(() {
-        appDir.parent.deleteSync(recursive: true);
+        // appDir.parent.deleteSync(recursive: true);
       });
       setUpAll(() async {
         final dir =
@@ -51,7 +51,7 @@ void main() {
 
         // create git in appDir
         appDir.createSync();
-        await run("git init -b master", workingDirectory: appDir.absolute.path);
+        await run("git init", workingDirectory: appDir.absolute.path);
 
         await runInstallScript(
             appDir: appDir.absolute.path, gitRootDir: gitRootDir.absolute.path);
@@ -105,8 +105,7 @@ void main() {
         // git repo in root, flutterw in appDir
         appDir = gitRootDir.childDirectory('myApp')..createSync();
 
-        await run("git init -b master",
-            workingDirectory: gitRootDir.absolute.path);
+        await run("git init", workingDirectory: gitRootDir.absolute.path);
         await runInstallScript(
             appDir: appDir.absolute.path, gitRootDir: gitRootDir.absolute.path);
       });

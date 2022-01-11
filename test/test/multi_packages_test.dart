@@ -16,7 +16,7 @@ void main() {
       addTearDown(() {
         repo.deleteSync(recursive: true);
       });
-      await run('git init -b master', workingDirectory: repo.absolute.path);
+      await run('git init', workingDirectory: repo.absolute.path);
       await runInstallScript(
           appDir: repo.absolute.path, gitRootDir: repo.absolute.path);
       await run('git commit -a -m "initial commit"',
