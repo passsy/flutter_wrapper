@@ -4,44 +4,48 @@ import 'dart:async';
 import 'dart:io' as io;
 
 import 'package:cli_script/cli_script.dart';
-import 'package:cli_script/src/config.dart';
-import 'package:cli_script/cli_script.dart' as cliscript;
 import 'package:file/file.dart';
 import 'package:file/local.dart';
+import 'package:synchronized/synchronized.dart';
 import 'package:test/test.dart';
 
 void main() {
   group('install', () {
-    test('report missing git', () async {
-      final dir = io.Directory.systemTemp.createTempSync('root');
-      addTearDown(() {
-        dir.deleteSync(recursive: true);
-      });
+    test(
+      'report missing git',
+      () async {
+        final dir = io.Directory.systemTemp.createTempSync('root');
+        addTearDown(() {
+          dir.deleteSync(recursive: true);
+        });
 
-      final script = Script.capture((_) async {
-        await runInstallScript(
-            appDir: dir.absolute.path, gitRootDir: dir.absolute.path);
-      });
-      // access fields before accessing them or they crash
-      final exitCodeFuture = script.exitCode;
-      final outFuture = script.stdout.text;
+        final script = Script.capture((_) async {
+          await runInstallScript(
+              appDir: dir.absolute.path, gitRootDir: dir.absolute.path);
+        });
+        // access fields before accessing them or they crash
+        final exitCodeFuture = script.exitCode;
+        final outFuture = script.stdout.text;
 
-      final err = await outFuture;
-      expect(err, contains("Not a git repository, to fix this run: git init"));
-      final code = await exitCodeFuture;
-      expect(code, 1);
-    });
+        final err = await outFuture;
+        expect(
+            err, contains("Not a git repository, to fix this run: git init"));
+        final code = await exitCodeFuture;
+        expect(code, 1);
+      },
+      timeout: const Timeout(Duration(minutes: 5)),
+    );
 
     group("install in git root", () {
       late Directory gitRootDir;
       late Directory appDir;
 
+      tearDownAll(() {
+        appDir.parent.deleteSync(recursive: true);
+      });
       setUpAll(() async {
         final dir =
             const LocalFileSystem().systemTempDirectory.createTempSync('root');
-        addTearDown(() {
-          dir.deleteSync(recursive: true);
-        });
         gitRootDir = appDir = dir.childDirectory('myApp');
         assert(gitRootDir == appDir);
 
@@ -55,7 +59,6 @@ void main() {
       });
 
       test('flutterw was downloaded', () async {
-        print("XXX $gitRootDir");
         expect(appDir.childFile('flutterw').existsSync(), isTrue);
       });
 
@@ -92,12 +95,13 @@ void main() {
       late Directory gitRootDir;
       late Directory appDir;
 
+      tearDownAll(() {
+        gitRootDir.deleteSync(recursive: true);
+      });
+
       setUpAll(() async {
         gitRootDir =
             const LocalFileSystem().systemTempDirectory.createTempSync('root');
-        // addTearDown(() {
-        //   gitRootDir.deleteSync(recursive: true);
-        // });
         // git repo in root, flutterw in appDir
         appDir = gitRootDir.childDirectory('myApp')..createSync();
 
@@ -144,6 +148,7 @@ void main() {
 }
 
 bool _precached = false;
+Lock precacheLock = Lock();
 
 Future<void> runInstallScript({
   required String appDir,
@@ -160,15 +165,19 @@ Future<void> runInstallScript({
       .split(" ")
       .last;
 
-  if (!_precached) {
-    run('flutter precache');
-    _precached = true;
-  }
+  await precacheLock.synchronized(() {
+    if (!_precached) {
+      run('flutter precache');
+      _precached = true;
+    }
+  });
 
-  fs.currentDirectory.childDirectory('build').createSync(recursive: true);
+  final buildDir = fs.directory(appDir).childDirectory('build')
+    ..createSync(recursive: true);
 
-  final File testableInstall =
-      repoRoot.childFile('install.sh').copySync('build/testable_install.sh');
+  final File testableInstall = repoRoot
+      .childFile('install.sh')
+      .copySync(buildDir.childFile('testable_install.sh').path);
 
   await run('chmod 755 ${testableInstall.path}');
   {
@@ -179,15 +188,16 @@ Future<void> runInstallScript({
     modified = modified.replaceFirst(
         'https://github.com/flutter/flutter.git', flutterRepoPath);
 
-    // copy bin files over so they don't have to be downloaded again
+    // Instead of getting dependencies, preload flutter dependencies
     modified = modified.replaceFirst(
       './flutterw packages get',
       'mkdir -p $appDir/.flutter/bin/cache/ \n'
-          'cp -R $flutterRepoPath/bin/ $gitRootDir/.flutter/bin/ \n'
-          './flutterw packages get',
+          'cp -R -L -f $flutterRepoPath/bin/ $gitRootDir/.flutter/bin/ \n'
+          'cp -R -L -f $flutterRepoPath/packages/flutter_tools/ $gitRootDir/.flutter/packages/flutter_tools/ \n'
+          './flutterw \n',
     );
 
-    // TODO replace  with a fixed "test" version
+    // Don't load version from repo
     modified = modified.replaceFirst(
       'VERSION_TAG=\$(curl -s "https://raw.githubusercontent.com/passsy/flutter_wrapper/master/version")',
       'VERSION_TAG=T.E.S.T',
