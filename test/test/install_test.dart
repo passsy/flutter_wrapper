@@ -157,9 +157,10 @@ Future<void> runInstallScript({
       .split(" ")
       .last;
 
-  await precacheLock.synchronized(() {
+  await precacheLock.synchronized(() async {
     if (!_precached) {
-      run('flutter precache');
+      await run('flutter upgrade');
+      await run('flutter precache');
       _precached = true;
     }
   });
