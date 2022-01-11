@@ -15,10 +15,14 @@ jobs:
     runs-on: ubuntu-latest
 
     container:
-      image: fischerscode/flutter:master
+      image: passsy/flutterw:base-0.4.1
 
     steps:
       - uses: actions/checkout@v2.4.0
+      - run: |
+          mkdir -p /flutter
+          git clone https://github.com/flutter/flutter.git -b stable /flutter
+          echo "/flutter/bin" >> $GITHUB_PATH
       - run: |
           cd test
           dart pub get
