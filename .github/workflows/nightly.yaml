@@ -23,6 +23,8 @@ jobs:
           mkdir -p /flutter
           git clone https://github.com/flutter/flutter.git -b stable /flutter
           echo "/flutter/bin" >> $GITHUB_PATH
+          git config --global user.email "dash@flutter.io"
+          git config --global user.name "Dash"
       - run: |
           cd test
           dart pub get
