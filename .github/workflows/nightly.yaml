@@ -11,7 +11,7 @@ on:
     - cron: '0 3 * * *'
 
 jobs:
-  nightly:
+  test:
     runs-on: ubuntu-latest
 
     container:
@@ -21,7 +21,7 @@ jobs:
       - uses: actions/checkout@v2.3.4
       - run: |
           cd test
-          dart packages get
+          dart pub get
       - run: |
           cd test
           dart run test
