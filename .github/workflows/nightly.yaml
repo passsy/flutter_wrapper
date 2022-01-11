@@ -15,10 +15,10 @@ jobs:
     runs-on: ubuntu-latest
 
     container:
-      image: fischerscode/flutter-sudo:latest
+      image: fischerscode/flutter:master
 
     steps:
-      - uses: actions/checkout@v2.3.4
+      - uses: actions/checkout@v2.4.0
       - run: |
           cd test
           dart pub get
