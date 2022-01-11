@@ -1,5 +1,3 @@
-// ignore_for_file: avoid_print
-
 import 'dart:async';
 import 'dart:io' as io;
 
@@ -55,7 +53,6 @@ void main() {
 
         await runInstallScript(
             appDir: appDir.absolute.path, gitRootDir: gitRootDir.absolute.path);
-        print('init done');
       });
 
       test('flutterw was downloaded', () async {
@@ -71,7 +68,6 @@ void main() {
 
       test('created .flutter submodule in appDir', () async {
         final flutterw = appDir.childFile('flutterw');
-        print("Checking dir ${flutterw.path}");
         expect(flutterw.existsSync(), isTrue);
       });
 
@@ -128,12 +124,9 @@ void main() {
       });
 
       test('subdir downloaded dart tools', () async {
-        print(gitRootDir.path);
-        expect(
-            gitRootDir
-                .childFile(".flutter/bin/cache/dart-sdk/bin/dart")
-                .existsSync(),
-            isTrue);
+        final dartBinary =
+            gitRootDir.childFile(".flutter/bin/cache/dart-sdk/bin/dart");
+        expect(dartBinary.existsSync(), isTrue);
       });
 
       test('subdir flutterw contains version', () async {
@@ -189,7 +182,9 @@ Future<void> runInstallScript({
 
     // Instead of getting dependencies, preload flutter dependencies
     modified = modified.replaceFirst(
-      './flutterw packages get',
+      '''if [ -f pubspec.yaml ]; then
+  ./flutterw packages get
+fi''',
       'mkdir -p $appDir/.flutter/bin/cache/ \n'
           'cp -R -L -f $flutterRepoPath/bin/ $gitRootDir/.flutter/bin/ \n'
           'cp -R -L -f $flutterRepoPath/packages/flutter_tools/ $gitRootDir/.flutter/packages/flutter_tools/ \n'
