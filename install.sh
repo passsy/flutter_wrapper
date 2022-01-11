@@ -50,19 +50,18 @@ if [ -z "$VERSION_TAG" ]; then
   fi
 fi
 
-printf "Installing Flutter Wrapper $VERSION_TAG\n"
+printf "Installing Flutter Wrapper %s\n" "$VERSION_TAG"
 
 ###
 # Add .flutter submodule
 ###
 FLUTTER_SUBMODULE_NAME='.flutter'
 GIT_HOME=$(git rev-parse --show-toplevel)
-FLUTTER_DIR="$GIT_HOME/$FLUTTER_SUBMODULE_NAME"
 
 # Check if submodule already exists (when updating flutter wrapper)
 HAS_SUBMODULE=$(git submodule | grep "\ ${FLUTTER_SUBMODULE_NAME}")
 if [ -z "${HAS_SUBMODULE}" ]; then
-  printf "adding '${FLUTTER_SUBMODULE_NAME}' submodule\n"
+  printf "adding '%s' submodule\n" "${FLUTTER_SUBMODULE_NAME}"
   UPDATED=false
 
   # create relative to <gitRoot>/.flutter
@@ -71,7 +70,7 @@ if [ -z "${HAS_SUBMODULE}" ]; then
   common_part=$source
   back=
   while [ "${target#$common_part}" = "${target}" ]; do
-    common_part=$(dirname $common_part)
+    common_part=$(dirname "$common_part")
     back="../${back}"
   done
   CLONE_TO=${back}${target#$common_part/}
@@ -90,26 +89,26 @@ else
   UPDATED=true
 
   # Update old ssh url to https
-  SUBMODULE_PATH=$(git config -f ${GIT_HOME}/.gitmodules submodule.)
+  SUBMODULE_PATH=$(git config -f "${GIT_HOME}/.gitmodules" submodule.)
 
-  USES_SSH=$(git config -f ${GIT_HOME}/.gitmodules submodule.${SUBMODULE_PATH}.url | cut -c 1-4)
+  USES_SSH=$(git config -f "${GIT_HOME}/.gitmodules" "submodule.${SUBMODULE_PATH}.url" | cut -c 1-4)
   if [ "$USES_SSH" = "git@" ]; then
-    printf "Update $FLUTTER_SUBMODULE_NAME submodule url to https\n"
-    git config -f ${GIT_HOME}/.gitmodules submodule.${SUBMODULE_PATH}.url https://github.com/flutter/flutter.git
-    git add ${GIT_HOME}/.gitmodules
-    git submodule sync ${FLUTTER_SUBMODULE_NAME}
+    printf "Update %s submodule url to https\n" "$FLUTTER_SUBMODULE_NAME"
+    git config -f "${GIT_HOME}/.gitmodules submodule.${SUBMODULE_PATH}.url" https://github.com/flutter/flutter.git
+    git add "${GIT_HOME}/.gitmodules"
+    git submodule sync "${FLUTTER_SUBMODULE_NAME}"
   fi
 fi
 
 ###
-# Downlaod flutterw exectuable
+# Download flutterw executable
 ###
 printf "Downloading new flutterw\n"
 # Download latest flutterw version
 FLUTTERW_URL="https://raw.githubusercontent.com/passsy/flutter_wrapper/$VERSION_TAG/flutterw"
 curl -sfO "$FLUTTERW_URL"
 if [ "$?" != "0" ]; then
-  printf "Couldn't downlaod flutterw from '$FLUTTERW_URL'\n"
+  printf "Couldn't download flutterw from '%s'\n" "$FLUTTERW_URL"
   exit 1
 fi
 
@@ -127,16 +126,18 @@ sed -i.bak "s/DATE_PLACEHOLDER/$DATE/g" flutterw && rm flutterw.bak
 git add flutterw
 
 ###
-# Downlaod flutterw exectuable
+# Run flutterw
 ###
 
 # bind this flutter instance to the project (update .packages file)
-./flutterw packages get
+if [ -f pubspec.yaml ]; then
+  ./flutterw packages get
+fi
 
 if $UPDATED; then
-  printf "\nFlutter Wrapper updated to version $VERSION_TAG\n\n"
+  printf "\nFlutter Wrapper updated to version %s\n\n" "$VERSION_TAG"
 else
-  printf "\nFlutter Wrapper installed (version $VERSION_TAG), initialized with channel stable.\n\n"
+  printf "\nFlutter Wrapper installed (version %s), initialized with channel stable.\n\n" "$VERSION_TAG"
 fi
 printf "Run your app with:     ./flutterw run\n"
 printf "Switch channel:        ./flutterw channel beta\n"
