@@ -156,10 +156,14 @@ Future<void> runInstallScript({
       .firstWhere((line) => line.contains("Flutter version"))
       .split(" ")
       .last;
+  final localFlutterExists = fs.directory(flutterRepoPath).existsSync();
+  if (!localFlutterExists) {
+    throw "Did not find a flutter repo on your system";
+  }
 
   await precacheLock.synchronized(() async {
     if (!_precached) {
-      await run('flutter upgrade');
+      await run('cd "$flutterRepoPath" && git checkout stable');
       await run('flutter precache');
       _precached = true;
     }
