@@ -163,9 +163,8 @@ Future<void> runInstallScript({
 
   await precacheLock.synchronized(() async {
     if (!_precached) {
-      await run('ls -la', workingDirectory: flutterRepoPath, runInShell: true);
-      await run('git checkout -b stable',
-          workingDirectory: flutterRepoPath, runInShell: true);
+      await run('git fetch origin', workingDirectory: flutterRepoPath);
+      await run('git checkout master', workingDirectory: flutterRepoPath);
       await run('flutter precache');
       _precached = true;
     }
