@@ -22,7 +22,11 @@ jobs:
       - run: |
           mkdir -p /flutter
           git clone https://github.com/flutter/flutter.git -b stable /flutter
+          export PATH="$PATH:/flutter/bin"
           echo "/flutter/bin" >> $GITHUB_PATH
+          git -c /flutter fetch origin
+          flutter precache --linux --web
+          
           git config --global user.email "dash@flutter.io"
           git config --global user.name "Dash"
       - run: |
