@@ -163,6 +163,20 @@ Future<void> runInstallScript({
 
   await precacheLock.synchronized(() async {
     if (!_precached) {
+      // switch to stable because the install script will clone stable. The
+      // versions all must match
+      final remotes = await output('git remote');
+      if (!remotes.contains('origin')) {
+        // add origin if it doesn't exist. i.e. in the cirrusci/flutter image
+        await run(
+          'git remote add origin https://github.com/flutter/flutter.git',
+          workingDirectory: flutterRepoPath,
+        );
+        await run(
+          'git checkout origin/stable',
+          workingDirectory: flutterRepoPath,
+        );
+      }
       await run('flutter channel stable');
       await run('flutter upgrade');
       await run('flutter precache');
