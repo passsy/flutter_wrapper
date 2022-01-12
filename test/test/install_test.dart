@@ -205,9 +205,10 @@ Future<void> runInstallScript({
       '''if [ -f pubspec.yaml ]; then
   ./flutterw packages get
 fi''',
+      // copy over precached files
       'mkdir -p $appDir/.flutter/bin/cache/ \n'
-          'cp -R -L -f $flutterRepoPath/bin/ $gitRootDir/.flutter/bin/ \n'
-          'cp -R -L -f $flutterRepoPath/packages/flutter_tools/ $gitRootDir/.flutter/packages/flutter_tools/ \n'
+          'cp -R -L -f "$flutterRepoPath/bin/" "$gitRootDir/.flutter/bin/" \n'
+          'cp -R -L -f "$flutterRepoPath/packages/flutter_tools/" "$gitRootDir/.flutter/packages/flutter_tools/" \n'
           './flutterw \n',
     );
 
