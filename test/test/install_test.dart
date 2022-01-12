@@ -163,6 +163,8 @@ Future<void> runInstallScript({
 
   await precacheLock.synchronized(() async {
     if (!_precached) {
+      await run('flutter channel stable');
+      await run('flutter upgrade');
       await run('flutter precache');
       _precached = true;
     }
