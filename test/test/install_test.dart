@@ -163,13 +163,19 @@ Future<void> runInstallScript({
 
   await precacheLock.synchronized(() async {
     if (!_precached) {
+      // make sure remote is setup correctly
+      final remotes =
+          await output('git remote', workingDirectory: flutterRepoPath);
+      if (!remotes.contains('origin')) {
+        await run(
+            'git remote add origin https://github.com/flutter/flutter.git',
+            workingDirectory: flutterRepoPath);
+      }
       // make sure all branches are available as in the remote
       await run('git fetch --all', workingDirectory: flutterRepoPath);
-      await run('git checkout origin/beta', workingDirectory: flutterRepoPath);
-      await run('git checkout origin/master',
-          workingDirectory: flutterRepoPath);
-      await run('git checkout origin/stable',
-          workingDirectory: flutterRepoPath);
+      await run('git checkout beta', workingDirectory: flutterRepoPath);
+      await run('git checkout master', workingDirectory: flutterRepoPath);
+      await run('git checkout stable', workingDirectory: flutterRepoPath);
 
       await run('flutter channel stable');
       await run('flutter upgrade');
