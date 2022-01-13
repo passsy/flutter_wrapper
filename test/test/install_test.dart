@@ -156,10 +156,30 @@ Future<void> runInstallScript({
       .firstWhere((line) => line.contains("Flutter version"))
       .split(" ")
       .last;
+  final localFlutterExists = fs.directory(flutterRepoPath).existsSync();
+  if (!localFlutterExists) {
+    throw "Did not find a flutter repo on your system";
+  }
 
-  await precacheLock.synchronized(() {
+  await precacheLock.synchronized(() async {
     if (!_precached) {
-      run('flutter precache');
+      // make sure remote is setup correctly
+      final remotes =
+          await output('git remote', workingDirectory: flutterRepoPath);
+      if (!remotes.contains('origin')) {
+        await run(
+            'git remote add origin https://github.com/flutter/flutter.git',
+            workingDirectory: flutterRepoPath);
+      }
+      // make sure all branches are available as in the remote
+      await run('git fetch --all', workingDirectory: flutterRepoPath);
+      await run('git checkout beta', workingDirectory: flutterRepoPath);
+      await run('git checkout master', workingDirectory: flutterRepoPath);
+      await run('git checkout stable', workingDirectory: flutterRepoPath);
+
+      await run('flutter channel stable');
+      await run('flutter upgrade');
+      await run('flutter precache');
       _precached = true;
     }
   });
@@ -185,9 +205,10 @@ Future<void> runInstallScript({
       '''if [ -f pubspec.yaml ]; then
   ./flutterw packages get
 fi''',
+      // copy over precached files
       'mkdir -p $appDir/.flutter/bin/cache/ \n'
-          'cp -R -L -f $flutterRepoPath/bin/ $gitRootDir/.flutter/bin/ \n'
-          'cp -R -L -f $flutterRepoPath/packages/flutter_tools/ $gitRootDir/.flutter/packages/flutter_tools/ \n'
+          'cp -R -L -f "$flutterRepoPath/bin/" "$gitRootDir/.flutter/bin/" \n'
+          'cp -R -L -f "$flutterRepoPath/packages/flutter_tools/" "$gitRootDir/.flutter/packages/flutter_tools/" \n'
           './flutterw \n',
     );
 

@@ -15,10 +15,23 @@ jobs:
     runs-on: ubuntu-latest
 
     container:
-      image: cirrusci/flutter:latest
+      image: passsy/flutterw:base-0.4.1
 
     steps:
-      - uses: actions/checkout@v2.3.4
+      - uses: actions/checkout@v2.4.0
+      - run: |
+          mkdir -p /flutter
+          git clone https://github.com/flutter/flutter.git -b stable /flutter
+          export PATH="$PATH:/flutter/bin"
+          echo "/flutter/bin" >> $GITHUB_PATH
+          cat /flutter/.git/config
+          # TODO fetch this in flutterw script
+          git -C /flutter fetch origin
+          git -C /flutter fetch --all
+          flutter precache --linux --web
+          
+          git config --global user.email "dash@flutter.io"
+          git config --global user.name "Dash"
       - run: |
           cd test
           dart pub get
