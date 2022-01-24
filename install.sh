@@ -89,7 +89,7 @@ else
   UPDATED=true
 
   # Update old ssh url to https
-  SUBMODULE_PATH=$(git config -f "${GIT_HOME}/.gitmodules" submodule.)
+  SUBMODULE_PATH=$(git config -f "${GIT_HOME}/.gitmodules" "submodule.$FLUTTER_SUBMODULE_NAME.path" )
 
   USES_SSH=$(git config -f "${GIT_HOME}/.gitmodules" "submodule.${SUBMODULE_PATH}.url" | cut -c 1-4)
   if [ "$USES_SSH" = "git@" ]; then
