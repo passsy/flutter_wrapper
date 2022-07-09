@@ -39,7 +39,7 @@ Commit this file to your git repo and your coworkers will automatically use `flu
 
 ### Use with IntelliJ / Android Studio
 
-Go to `Preferences > Languages & Frameworks > Flutter` and set the Flutter SDK path to `$projectRoot/.flutter`
+Go to `File > Settings > Languages & Frameworks > Flutter` and set the Flutter SDK path to `$projectRoot/.flutter`
 
 <img width="800" alt="IntelliJ Settings" src="https://user-images.githubusercontent.com/1096485/64658026-3a1fdd00-d436-11e9-9457-556059f68e2c.png">
 
