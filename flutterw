@@ -53,23 +53,24 @@ fi
 
 # Ensure flutter version matches pubspec.yaml file
 PUBSPEC_VERSION=$(yq eval '.environment.flutter' pubspec.yaml)
-if [ -z "$PUBSPEC_VERSION" ]; then
-  echoerr "Warning: yq is not installed so could not verify that the .flutter version matches the "\
+if [ -z "${PUBSPEC_VERSION}" ]; then
+  echoerr "Warning: yq is not installed so could not verify that the .flutter version matches the"\
     "value in pubspec.yaml"
-  echoerr "Install using \`brew install yq\` or \`snap install yq\` to silence this warning"
-elif [ "$PUBSPEC_VERSION" = "null" ]; then
+  echoerr "Install using \`brew install yq\` or \`snap install yq\` depending on your platform to"\
+    "silence this warning"
+elif [ "${PUBSPEC_VERSION}" = "null" ]; then
   echoerr "Warning: Flutter version was not specified in pubspec.yaml.  Adding it for you now..."
   FLUTTER_VERSION=$(cd .flutter && git describe --tags --exact-match)
-  yq -i ".environment.flutter = \"$FLUTTER_VERSION\"" pubspec.yaml
-  echoerr "Flutter version set to $FLUTTER_VERSION in pubspec.yaml"
+  yq -i ".environment.flutter = \"${FLUTTER_VERSION}\"" pubspec.yaml
+  echoerr "Flutter version set to ${FLUTTER_VERSION} in pubspec.yaml"
   unset FLUTTER_VERSION
 else
-  PUBSPEC_COMMIT=$(cd .flutter && (git rev-parse "$PUBSPEC_VERSION" 2> /dev/null) || (git fetch && git rev-parse "$PUBSPEC_VERSION"))
+  PUBSPEC_COMMIT=$(cd .flutter && (git rev-parse "${PUBSPEC_VERSION}" 2> /dev/null) || (git fetch && git rev-parse "${PUBSPEC_VERSION}"))
   CURRENT_COMMIT=$(cd .flutter && git rev-parse HEAD)
 
-  if [ "$CURRENT_COMMIT" != "$PUBSPEC_COMMIT" ]; then
-    echoerr "Updating flutter version to match $PUBSPEC_VERSION specified in pubspec.yaml"
-    (cd .flutter && git checkout --quiet "$PUBSPEC_COMMIT" && rm -rf .flutter/bin/cache)
+  if [ "${CURRENT_COMMIT}" != "${PUBSPEC_COMMIT}" ]; then
+    echoerr "Updating flutter version to match ${PUBSPEC_VERSION} specified in pubspec.yaml"
+    (cd .flutter && git fetch --all --tags --quiet && git checkout --quiet "tags/${PUBSPEC_COMMIT}" && rm -rf .flutter/bin/cache)
   fi
 fi
 
