@@ -59,7 +59,7 @@ FLUTTER_SUBMODULE_NAME='.flutter'
 GIT_HOME=$(git rev-parse --show-toplevel)
 
 # Check if submodule already exists (when updating flutter wrapper)
-HAS_SUBMODULE=$(git submodule | grep "\ ${FLUTTER_SUBMODULE_NAME}")
+HAS_SUBMODULE=$(git -C "${GIT_HOME}" submodule | grep "\ ${FLUTTER_SUBMODULE_NAME}")
 if [ -z "${HAS_SUBMODULE}" ]; then
   printf "adding '%s' submodule\n" "${FLUTTER_SUBMODULE_NAME}"
   UPDATED=false
