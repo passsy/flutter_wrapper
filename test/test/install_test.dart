@@ -39,7 +39,7 @@ void main() {
       late Directory appDir;
 
       tearDownAll(() {
-        // appDir.parent.deleteSync(recursive: true);
+        appDir.parent.deleteSync(recursive: true);
       });
       setUpAll(() async {
         final dir =
