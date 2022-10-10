@@ -1,3 +1,9 @@
+# Changelog
+
+## 1.3.1
+
+- Allow flutterw update when placed in repo subfolder [#34](https://github.com/passsy/flutter_wrapper/pull/34)
+
 ## 1.3.0
 
 - Don't clear .gitmodules when calling `flutter channel` without a channel [#26](https://github.com/passsy/flutter_wrapper/pull/26)
