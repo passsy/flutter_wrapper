@@ -37,4 +37,4 @@ jobs:
           dart pub get
       - run: |
           cd test
-          dart run test
+          dart run test -j 1
