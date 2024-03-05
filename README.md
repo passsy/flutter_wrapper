@@ -104,6 +104,36 @@ sh -c "$(curl -fsSL https://raw.githubusercontent.com/passsy/flutter_wrapper/mas
 ./flutterw run
 ```
 
+### Using flutterw on CI
+
+Here is an example of using flutterw on a CI server.
+
+```bash
+jobs:
+  linux:
+    runs-on: ubuntu-latest
+
+    container:
+      # Use container with pre-installed Flutter dependencies like unzip, libglu1-mesa
+      image: passsy/flutterw:base-0.4.1
+
+    steps:
+      - uses: actions/checkout@v2.4.0
+      - run: ./flutterw doctor -v
+      - run: ./flutterw pub get
+      - run: ./flutterw test
+      - run: ./flutterw analyze --fatal-infos --fatal-warnings .
+
+  macos:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v2.4.0
+      - run: ./flutterw doctor -v
+      - run: ./flutterw pub get
+      - run: ./flutterw test
+      - run: ./flutterw analyze --fatal-infos --fatal-warnings .
+```
+
 ## License
 
 ```
