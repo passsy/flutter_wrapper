@@ -57,7 +57,7 @@ jobs:
 
   build_on_linux:
     runs-on: ubuntu-latest
-    depends-on: createSampleProject
+    needs: createSampleProject
 
     container:
       # Use container with pre-installed Flutter dependencies like unzip, libglu1-mesa
@@ -72,7 +72,7 @@ jobs:
 
   build_on_macos:
     runs-on: macos-latest
-    depends-on: createSampleProject
+    needs: createSampleProject
 
     steps:
       - uses: actions/checkout@v2.4.0
