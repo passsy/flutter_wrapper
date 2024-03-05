@@ -38,3 +38,45 @@ jobs:
       - run: |
           cd test
           dart run test
+
+  createSampleProject:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+      - run: |
+          flutter create sample
+          cd sample
+          sh -c "$(curl -fsSL https://raw.githubusercontent.com/passsy/flutter_wrapper/master/install.sh)"
+      - uses: actions/upload-artifact@v2
+        with:
+          name: sample
+          path: sample
+
+  build_on_linux:
+    runs-on: ubuntu-latest
+    depends-on: createSampleProject
+
+    container:
+      # Use container with pre-installed Flutter dependencies like unzip, libglu1-mesa
+      image: passsy/flutterw:base-0.4.1
+
+    steps:
+      - uses: actions/checkout@v2.4.0
+      - run: ./flutterw doctor -v
+      - run: ./flutterw pub get
+      - run: ./flutterw test
+      - run: ./flutterw analyze --fatal-infos --fatal-warnings .
+
+  build_on_macos:
+    runs-on: macos-latest
+    depends-on: createSampleProject
+
+    steps:
+      - uses: actions/checkout@v2.4.0
+      - run: ./flutterw doctor -v
+      - run: ./flutterw pub get
+      - run: ./flutterw test
+      - run: ./flutterw analyze --fatal-infos --fatal-warnings .
