@@ -248,6 +248,12 @@ fi''',
       'file://${repoRoot.childFile('flutterw').path}',
     );
 
+    // add set -x for debugging
+    modified = modified.replaceFirst(
+      '#!/usr/bin/env sh',
+      '#!/usr/bin/env sh\nset -x',
+    );
+
     testableInstall.writeAsStringSync(modified);
   }
 
