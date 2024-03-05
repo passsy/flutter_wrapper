@@ -155,11 +155,11 @@ Future<void> allowCloneFromFile() async {
     await run('git config --global protocol.file.allow always');
 
     // always restore to previous value
-    addTearDown(() {
+    addTearDown(() async {
       if (allowValue == null) {
-        run('git config --global --unset protocol.file.allow');
+        await run('git config --global --unset protocol.file.allow');
       } else {
-        run('git config --global protocol.file.allow $allowValue');
+        await run('git config --global protocol.file.allow $allowValue');
       }
     });
   }
