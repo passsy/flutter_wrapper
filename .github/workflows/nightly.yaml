@@ -19,7 +19,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2.4.0
-      - run: |
+      - name: Preload Flutter
+        run: |
           mkdir -p /flutter
           git clone https://github.com/flutter/flutter.git -b stable /flutter
           export PATH="$PATH:/flutter/bin"
@@ -32,9 +33,12 @@ jobs:
           
           git config --global user.email "dash@flutter.io"
           git config --global user.name "Dash"
-      - run: |
+      - name: Get dependencies
+        run: |
           cd test
           dart pub get
-      - run: |
+
+      - name: Run tests
+        run: |
           cd test
           dart run test -j 1
