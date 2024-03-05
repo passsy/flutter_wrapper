@@ -142,10 +142,34 @@ void main() {
 bool _precached = false;
 Lock precacheLock = Lock();
 
+/// Allow to clone from file system to speed up tests
+Future<void> allowCloneFromFile() async {
+  // get current allow setting
+  String? allowValue;
+  try {
+    allowValue = await output('git config --global protocol.file.allow');
+  } catch (e) {
+    // ignore, not set
+  }
+  if (allowValue?.trim() != 'always') {
+    await run('git config --global protocol.file.allow always');
+
+    // always restore to previous value
+    addTearDown(() {
+      if (allowValue == null) {
+        run('git config --global --unset protocol.file.allow');
+      } else {
+        run('git config --global protocol.file.allow $allowValue');
+      }
+    });
+  }
+}
+
 Future<void> runInstallScript({
   required String appDir,
   required String gitRootDir,
 }) async {
+  await allowCloneFromFile();
   const fs = LocalFileSystem();
   final repoRoot = fs.currentDirectory.parent;
   // Get path from line
